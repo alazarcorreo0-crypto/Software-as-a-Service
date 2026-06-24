@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiPedidOS - Tu Negocio Digital</title>
+    <title>SaaS MultiPedidOS - Sistema de Gestión e Interfaz de Órdenes</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -11,363 +11,519 @@
         .modal.active { display: flex; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased pb-24">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased pb-28">
 
-    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3 flex justify-between items-center">
+    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3 flex justify-between items-center border-b border-slate-100">
         <div>
-            <h1 id="biz-name" class="text-xl font-bold text-orange-600 flex items-center gap-1">
-                <i data-lucide="store" class="w-6 h-6"></i> Pizzas & Tacos "El Chano"
+            <h1 id="brand-title" class="text-xl font-black text-indigo-600 flex items-center gap-1.5 tracking-tight">
+                <i data-lucide="store" class="w-6 h-6"></i> MultiPedidOS
             </h1>
-            <p id="biz-slogan" class="text-xs text-gray-500">Pedidos rápidos y sin comisiones</p>
+            <p class="text-xs text-slate-400 font-medium">Plataforma Digital de Pedidos</p>
         </div>
-        <button onclick="toggleAdminView()" id="btn-admin-mode" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all">
-            <i data-lucide="shield-alert" class="w-4 h-4"></i> Modo Admin (123)
-        </button>
+        <div class="flex gap-2">
+            <button onclick="accessRole('delivery_user', '456')" id="btn-rep-mode" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all">
+                <i data-lucide="bike" class="w-4 h-4"></i> Repartidor (456)
+            </button>
+            <button onclick="accessRole('admin_user', '123')" id="btn-admin-mode" class="bg-slate-900 hover:bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all">
+                <i data-lucide="shield" class="w-4 h-4"></i> Admin (123)
+            </button>
+        </div>
     </header>
 
-    <main id="view-client" class="max-w-md mx-auto px-4 mt-4 space-y-6">
+    <div id="role-banner" class="hidden bg-indigo-50 border-b border-indigo-100 px-4 py-2 text-xs font-semibold text-indigo-700 flex justify-between items-center">
+        <span id="role-banner-text">Modo de visualización actual</span>
+        <button onclick="exitRoles()" class="underline text-indigo-900 hover:no-underline">Volver a Vista Cliente</button>
+    </div>
+
+    <main id="view-client" class="max-w-md mx-auto px-4 mt-5 space-y-6">
         
-        <div class="bg-white p-2 rounded-xl shadow-xs flex bg-gray-100">
-            <button onclick="setDeliveryMode('delivery')" id="btn-deliv" class="w-1/2 py-2 text-sm font-medium rounded-lg bg-white text-orange-600 shadow-xs flex justify-center items-center gap-2 transition-all">
-                <i data-lucide="bike" class="w-4 h-4"></i> A Domicilio
+        <div class="bg-slate-100 p-1.5 rounded-xl flex">
+            <button onclick="setDeliveryType('delivery')" id="type-deliv" class="w-1/2 py-2.5 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-xs flex justify-center items-center gap-2 transition-all">
+                <i data-lucide="truck" class="w-4 h-4"></i> Entrega a Domicilio
             </button>
-            <button onclick="setDeliveryMode('pickup')" id="btn-pickup" class="w-1/2 py-2 text-sm font-medium rounded-lg text-gray-600 flex justify-center items-center gap-2 transition-all">
+            <button onclick="setDeliveryType('pickup')" id="type-pickup" class="w-1/2 py-2.5 text-sm font-bold rounded-lg text-slate-600 flex justify-center items-center gap-2 transition-all">
                 <i data-lucide="shopping-bag" class="w-4 h-4"></i> Recoger en Tienda
             </button>
         </div>
 
-        <div id="geo-section" class="bg-white p-4 rounded-xl shadow-xs border border-gray-100 space-y-3">
-            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1">
-                <i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i> ¿Dónde entregamos tu orden?
-            </label>
-            <div class="w-full h-32 bg-sky-100 rounded-lg relative overflow-hidden flex flex-col justify-center items-center border border-sky-200">
-                <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                <i data-lucide="map-pin" class="w-8 h-8 text-red-500 animate-bounce z-10"></i>
-                <span class="text-xs bg-white/90 px-2 py-1 rounded-full shadow-xs text-gray-700 font-medium z-10 mt-1">Tu ubicación seleccionada</span>
+        <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-100 space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <i data-lucide="user-check" class="w-4 h-4 text-indigo-500"></i> Información de Entrega
+            </h3>
+            
+            <div class="grid grid-cols-1 gap-3">
+                <input type="text" id="client-name" placeholder="Tu Nombre Completo" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
+                <input type="tel" id="client-phone" placeholder="WhatsApp (Ej: +52155123456)" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
             </div>
-            <input type="text" id="client-address" placeholder="Ej. Calle Av. Reforma #123, Colonia Centro" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-orange-500">
-            <input type="tel" id="client-phone" placeholder="Tu Teléfono de WhatsApp (Ej: +5211234567)" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-orange-500">
+
+            <div id="wrapper-map-section" class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500">Ubica tu domicilio haciendo clic en el mapa:</label>
+                <div onclick="moveMapPin(event)" id="mock-map" class="w-full h-40 bg-sky-100 rounded-xl relative overflow-hidden border border-sky-200 cursor-crosshair">
+                    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#4f46e5_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                    <div id="map-pin" class="absolute transition-all duration-200" style="top: 50%; left: 50%; transform: translate(-50%, -100%);">
+                        <i data-lucide="map-pin" class="w-7 h-7 text-red-500 drop-shadow-md"></i>
+                    </div>
+                </div>
+                <input type="text" id="client-address" placeholder="Dirección, Calle, Número y Colonia" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
+            </div>
         </div>
 
-        <div>
-            <h2 class="font-bold text-gray-900 text-lg mb-3 flex items-center gap-1">
-                <i data-lucide="utensils" class="w-5 h-5 text-orange-500"></i> Nuestro Menú
+        <div class="space-y-3">
+            <h2 class="font-black text-slate-900 text-lg flex items-center gap-1.5">
+                <i data-lucide="layers" class="w-5 h-5 text-indigo-500"></i> Catálogo Disponible
             </h2>
-            <div id="menu-container" class="grid grid-cols-1 gap-3">
+            <div id="client-menu-box" class="grid grid-cols-1 gap-3">
                 </div>
         </div>
     </main>
 
-    <div id="cart-bar" class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 p-4 shadow-xl max-w-md mx-auto z-40 flex justify-between items-center">
+    <div id="cart-bar" class="fixed bottom-0 inset-x-0 bg-white border-t border-slate-100 p-4 shadow-2xl max-w-md mx-auto z-40 flex justify-between items-center rounded-t-2xl">
         <div>
-            <p class="text-xs text-gray-400 font-medium">Total estimado</p>
-            <p id="cart-total" class="text-xl font-black text-gray-900">$0.00</p>
+            <p class="text-xs text-slate-400 font-semibold">Total a pagar</p>
+            <p id="cart-total" class="text-2xl font-black text-slate-900">$0.00</p>
         </div>
-        <button onclick="placeOrder()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-orange-600/20 flex items-center gap-2 text-sm transition-all">
-            Enviar Pedido <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        <button onclick="submitClientOrder()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 flex items-center gap-2 text-sm transition-all">
+            Confirmar Orden <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
     </div>
 
 
-    <main id="view-admin" class="hidden max-w-2xl mx-auto px-4 mt-4 space-y-6">
-        
-        <div class="border-b border-gray-200 flex gap-4">
-            <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="border-b-2 border-orange-600 text-orange-600 pb-2 text-sm font-bold flex items-center gap-1">
-                <i data-lucide="list-ordered" class="w-4 h-4"></i> Pedidos Activos
-            </button>
-            <button onclick="switchAdminTab('products')" id="tab-btn-products" class="text-gray-500 pb-2 text-sm font-medium flex items-center gap-1">
-                <i data-lucide="package" class="w-4 h-4"></i> Gestionar Productos
-            </button>
-            <button onclick="switchAdminTab('sales')" id="tab-btn-sales" class="text-gray-500 pb-2 text-sm font-medium flex items-center gap-1">
-                <i data-lucide="line-chart" class="w-4 h-4"></i> Registro de Ventas
-            </button>
+    <main id="view-delivery" class="hidden max-w-md mx-auto px-4 mt-5 space-y-4">
+        <div class="flex justify-between items-center">
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                <i data-lucide="navigation" class="w-5 h-5 text-indigo-600"></i> Ruta de Entregas
+            </h2>
+            <span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-bold">Ruta Externa</span>
         </div>
-
-        <div id="admin-tab-orders" class="space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="text-lg font-bold text-gray-900">Monitoreo de Órdenes</h2>
-                <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Tiempo Real</span>
+        <div id="delivery-orders-container" class="space-y-3">
             </div>
-            <div id="orders-list-container" class="space-y-3">
-                </div>
+    </main>
+
+
+    <main id="view-admin" class="hidden max-w-3xl mx-auto px-4 mt-5 space-y-6">
+        
+        <div class="border-b border-slate-200 flex gap-6 overflow-x-auto pb-1">
+            <button onclick="toggleAdminTabs('orders')" id="tab-orders" class="border-b-2 border-indigo-600 text-indigo-600 pb-2 text-sm font-bold flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="bell" class="w-4 h-4"></i> Órdenes Activas
+            </button>
+            <button onclick="toggleAdminTabs('products')" id="tab-products" class="text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="sliders" class="w-4 h-4"></i> Control de Productos
+            </button>
+            <button onclick="toggleAdminTabs('sales')" id="tab-sales" class="text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="wallet" class="w-4 h-4"></i> Corte e Historial
+            </button>
         </div>
 
-        <div id="admin-tab-products" class="hidden space-y-4">
+        <div id="panel-orders" class="space-y-4">
+            <div id="admin-orders-container" class="space-y-3"></div>
+        </div>
+
+        <div id="panel-products" class="hidden space-y-4">
             <div class="flex justify-between items-center">
-                <h2 class="text-lg font-bold text-gray-900">Catálogo de Productos</h2>
-                <button onclick="openProductModal()" class="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg font-bold flex items-center gap-1">
-                    <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Producto
+                <h3 class="text-base font-black text-slate-900">Configuración de Catálogo</h3>
+                <button onclick="triggerProductModal()" class="bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs hover:bg-indigo-700">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Crear Item
                 </button>
             </div>
-            <div id="admin-products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                </div>
+            <div id="admin-products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
         </div>
 
-        <div id="admin-tab-sales" class="hidden space-y-4">
-            <h2 class="text-lg font-bold text-gray-900">Corte de Caja Diario</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
-                    <p class="text-xs text-emerald-700 font-bold uppercase tracking-wider">Ventas Totales</p>
-                    <p id="sales-total-amount" class="text-2xl font-black text-emerald-900">$0.00</p>
+        <div id="panel-sales" class="hidden space-y-6">
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Caja Acumulada del Turno Actual</p>
+                    <p id="live-sales-amount" class="text-3xl font-black text-emerald-600 mt-1">$0.00</p>
+                    <p id="live-sales-count" class="text-xs text-slate-500 mt-1">0 órdenes liquidadas sin archivar</p>
                 </div>
-                <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl">
-                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Órdenes Cerradas</p>
-                    <p id="sales-count" class="text-2xl font-black text-gray-800">0</p>
-                </div>
+                <button onclick="closeCurrentShift()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all">
+                    <i data-lucide="archive" class="w-4 h-4"></i> Cerrar Día y Archivar Caja
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5">
+                    <i data-lucide="calendar-days" class="w-4 h-4 text-slate-500"></i> Historial de Cortes Concluidos
+                </h3>
+                <div id="archived-shifts-box" class="space-y-2"></div>
             </div>
         </div>
     </main>
 
 
-    <div id="product-modal" class="modal fixed inset-0 bg-black/50 z-50 justify-center items-center p-4">
-        <div class="bg-white rounded-2xl w-full max-w-sm p-6 space-y-4">
-            <h3 id="modal-title" class="text-base font-bold text-gray-900">Agregar Producto</h3>
+    <div id="custom-order-modal" class="modal fixed inset-0 bg-slate-950/60 z-50 justify-center items-center p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 id="cust-modal-title" class="text-base font-black text-slate-900">Personalizar Producto</h3>
+                    <p id="cust-modal-price" class="text-sm font-extrabold text-indigo-600 mt-0.5"></p>
+                </div>
+                <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
             <div class="space-y-3">
-                <input type="hidden" id="form-product-id">
                 <div>
-                    <label class="text-xs font-bold text-gray-500 block mb-1">Nombre del producto</label>
-                    <input type="text" id="form-product-name" class="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none">
+                    <label class="text-xs font-bold text-slate-400 uppercase block mb-2">Ingredientes / Opciones Incluidas</label>
+                    <div id="ingredients-checkboxes-box" class="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                        </div>
                 </div>
+
                 <div>
-                    <label class="text-xs font-bold text-gray-500 block mb-1">Precio ($)</label>
-                    <input type="number" id="form-product-price" class="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-500 block mb-1">URL de la Imagen (Unsplash, etc.)</label>
-                    <input type="text" id="form-product-img" class="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none" placeholder="https://images.unsplash.com/...">
+                    <label class="text-xs font-bold text-slate-400 uppercase block mb-1">Notas Especiales o Instrucciones</label>
+                    <textarea id="cust-modal-notes" rows="2" placeholder="Ej: Sin aderezo, términos de cocción, etc." class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 resize-none"></textarea>
                 </div>
             </div>
-            <div class="flex gap-2 justify-end">
-                <button onclick="closeProductModal()" class="px-4 py-2 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                <button onclick="saveProduct()" class="px-4 py-2 text-xs font-bold text-white bg-orange-600 rounded-lg">Guardar</button>
+
+            <button onclick="commitToCart()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl text-sm hover:bg-indigo-700 transition-all flex justify-center items-center gap-1 shadow-md shadow-indigo-600/10">
+                Añadir al Pedido <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="product-crud-modal" class="modal fixed inset-0 bg-slate-950/60 z-50 justify-center items-center p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+            <h3 id="crud-modal-title" class="text-base font-black text-slate-900">Estructura de Item</h3>
+            <div class="space-y-3 text-left">
+                <input type="hidden" id="crud-id">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Nombre Comercial del Producto</label>
+                    <input type="text" id="crud-name" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Precio Unitario ($)</label>
+                    <input type="number" id="crud-price" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Imagen del Producto (URL pública)</label>
+                    <input type="text" id="crud-img" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-indigo-500" placeholder="https://images.unsplash.com/...">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Ingredientes Base (Separados por comas)</label>
+                    <input type="text" id="crud-ingredients" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-indigo-500" placeholder="Ingrediente 1, Ingrediente 2, Ingrediente 3">
+                </div>
             </div>
+            <div class="flex gap-2 justify-end pt-2">
+                <button onclick="closeCrudModal()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl">Descartar</button>
+                <button onclick="saveCrudProduct()" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl">Almacenar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightbox-modal" onclick="closeLightbox()" class="modal fixed inset-0 bg-black/90 z-50 justify-center items-center p-4 cursor-zoom-out">
+        <div class="relative max-w-md max-h-[80vh] bg-transparent flex justify-center items-center">
+            <img id="lightbox-img" src="" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl">
+            <p class="absolute bottom-[-30px] text-xs text-white/70 text-center font-medium">Haz clic en cualquier lado para cerrar</p>
         </div>
     </div>
 
 
     <script>
-        // --- BASE DE DATOS LOCAL EN MEMORIA (Simulada para testeo rápido) ---
-        let products = [
-            { id: 1, name: "Pizza Pepperoni Suprema", price: 180, img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400" },
-            { id: 2, name: "Hamburguesa Monster Bacon", price: 120, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400" },
-            { id: 3, name: "Orden de Tacos al Pastor (5 pzs)", price: 85, img: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=400" }
+        // --- BASE DE DATOS E HISTORIALES PERSISTENTES (LocalStorage) ---
+        let products = JSON.parse(localStorage.getItem('saas_products')) || [
+            { id: 1, name: "Producto Estándar Alfa", price: 150, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500", ingredients: ["Ingrediente Principal", "Saborizante Base", "Aderezo Especial"] },
+            { id: 2, name: "Producto Estándar Beta", price: 190, img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500", ingredients: ["Base Horneada", "Complemento Premium"] },
+            { id: 3, name: "Producto Estándar Gama", price: 95, img: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=500", ingredients: ["Porción Crujiente", "Mezcla de la Casa", "Guarnición"] }
         ];
 
-        let orders = [
-            { id: 101, clientPhone: "5215512345678", address: "Av. Juárez #405", mode: "delivery", items: [{ name: "Pizza Pepperoni Suprema", qty: 1 }], total: 180, status: "Pendiente" }
-        ];
-        
-        let salesHistory = [];
-        let cart = {};
-        let deliveryMode = "delivery"; // delivery u o pickup
-        let isAdmin = false;
+        let orders = JSON.parse(localStorage.getItem('saas_orders')) || [];
+        let currentShiftSales = JSON.parse(localStorage.getItem('saas_shift_sales')) || [];
+        let archivedShifts = JSON.parse(localStorage.getItem('saas_archived_shifts')) || [];
 
-        // --- INICIALIZADOR ---
+        // Variables de sesión temporal de usuario
+        let cart = [];
+        let activeProductForCustomization = null;
+        let selectedDeliveryType = "delivery"; 
+        let activeRoleMode = "client"; // client, admin, delivery
+
+        // Coordenadas simuladas del pin del mapa
+        let mapCoordinates = { x: 50, y: 50 };
+
+        // --- SISTEMA DE INICIALIZACIÓN ---
         window.onload = function() {
             renderClientMenu();
             renderAdminProducts();
             renderAdminOrders();
-            calculateSales();
+            renderDeliveryOrders();
+            calculateFinanceSummary();
+            renderArchivedShifts();
             lucide.createIcons();
         };
 
-        // --- MANEJO DE VISTAS (CLIENTE VS ADMIN) ---
-        function toggleAdminView() {
-            if (!isAdmin) {
-                let pass = prompt("Introduce la contraseña de acceso (Por defecto: 123):");
-                if (pass === "123") {
-                    isAdmin = true;
-                    document.getElementById("btn-admin-mode").innerHTML = `<i data-lucide='log-out' class='w-4 h-4'></i> Salir de Admin`;
-                    document.getElementById("view-client").classList.add("hidden");
-                    document.getElementById("cart-bar").classList.add("hidden");
-                    document.getElementById("view-admin").classList.remove("hidden");
-                    switchAdminTab('orders');
-                } else if (pass !== null) {
-                    alert("❌ Contraseña incorrecta. Intenta con '123'");
-                }
-            } else {
-                isAdmin = false;
-                document.getElementById("btn-admin-mode").innerHTML = `<i data-lucide='shield-alert' class='w-4 h-4'></i> Modo Admin (123)`;
+        function saveToStorage() {
+            localStorage.setItem('saas_products', JSON.stringify(products));
+            localStorage.setItem('saas_orders', JSON.stringify(orders));
+            localStorage.setItem('saas_shift_sales', JSON.stringify(currentShiftSales));
+            localStorage.setItem('saas_archived_shifts', JSON.stringify(archivedShifts));
+        }
+
+        // --- ENRUTADOR DE ROLES DE ACCESO ---
+        function accessRole(role, expectedPassword) {
+            let pass = prompt(`Ingrese clave de seguridad para este rol comercial:`);
+            if (pass === expectedPassword) {
+                activeRoleMode = role;
+                
+                // Resetear visibilidad global
+                document.getElementById("view-client").classList.add("hidden");
+                document.getElementById("cart-bar").classList.add("hidden");
                 document.getElementById("view-admin").classList.add("hidden");
-                document.getElementById("view-client").classList.remove("hidden");
-                document.getElementById("cart-bar").classList.remove("hidden");
-                updateCartUI();
+                document.getElementById("view-delivery").classList.add("hidden");
+                
+                // Activar Banner descriptivo
+                const banner = document.getElementById("role-banner");
+                const bannerText = document.getElementById("role-banner-text");
+                banner.classList.remove("hidden");
+
+                if(role === 'admin_user') {
+                    bannerText.innerText = "Panel de Administración del Negocio (Acceso Financiero Abierto)";
+                    document.getElementById("view-admin").classList.remove("hidden");
+                    toggleAdminTabs('orders');
+                } else if(role === 'delivery_user') {
+                    bannerText.innerText = "Módulo Exclusivo para Repartidores (Solo Direcciones y Rutas)";
+                    document.getElementById("view-delivery").classList.remove("hidden");
+                    renderDeliveryOrders();
+                }
+            } else if (pass !== null) {
+                alert("❌ Código de autorización incorrecto.");
             }
             lucide.createIcons();
         }
 
-        function switchAdminTab(tab) {
-            document.getElementById("admin-tab-orders").classList.add("hidden");
-            document.getElementById("admin-tab-products").classList.add("hidden");
-            document.getElementById("admin-tab-sales").classList.add("hidden");
+        function exitRoles() {
+            activeRoleMode = "client";
+            document.getElementById("role-banner").classList.add("hidden");
+            document.getElementById("view-admin").classList.add("hidden");
+            document.getElementById("view-delivery").classList.add("hidden");
             
-            document.getElementById("tab-btn-orders").className = "text-gray-500 pb-2 text-sm font-medium flex items-center gap-1";
-            document.getElementById("tab-btn-products").className = "text-gray-500 pb-2 text-sm font-medium flex items-center gap-1";
-            document.getElementById("tab-btn-sales").className = "text-gray-500 pb-2 text-sm font-medium flex items-center gap-1";
-
-            document.getElementById(`admin-tab-${tab}`).classList.remove("hidden");
-            const activeBtn = document.getElementById(`tab-btn-${tab}`);
-            activeBtn.className = "border-b-2 border-orange-600 text-orange-600 pb-2 text-sm font-bold flex items-center gap-1";
+            document.getElementById("view-client").classList.remove("hidden");
+            document.getElementById("cart-bar").classList.remove("hidden");
+            updateCartPriceSum();
             lucide.createIcons();
         }
 
-        // --- MÓDULO: CLIENTE (INTERFAZ) ---
-        function setDeliveryMode(mode) {
-            deliveryMode = mode;
-            const btnDeliv = document.getElementById("btn-deliv");
-            const btnPickup = document.getElementById("btn-pickup");
-            const geoSection = document.getElementById("geo-section");
+        function toggleAdminTabs(tabName) {
+            document.getElementById("panel-orders").classList.add("hidden");
+            document.getElementById("panel-products").classList.add("hidden");
+            document.getElementById("panel-sales").classList.add("hidden");
+
+            document.getElementById("tab-orders").className = "text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap";
+            document.getElementById("tab-products").className = "text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap";
+            document.getElementById("tab-sales").className = "text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap";
+
+            document.getElementById(`panel-${tabName}`).classList.remove("hidden");
+            document.getElementById(`tab-${tabName}`).className = "border-b-2 border-indigo-600 text-indigo-600 pb-2 text-sm font-bold flex items-center gap-1.5 whitespace-nowrap";
+            lucide.createIcons();
+        }
+
+        // --- INTERFAZ DEL CLIENTE Y FLUJO DEL CARRITO ---
+        function setDeliveryType(mode) {
+            selectedDeliveryType = mode;
+            const btnDeliv = document.getElementById("type-deliv");
+            const btnPickup = document.getElementById("type-pickup");
+            const mapSection = document.getElementById("wrapper-map-section");
 
             if (mode === "delivery") {
-                btnDeliv.className = "w-1/2 py-2 text-sm font-medium rounded-lg bg-white text-orange-600 shadow-xs flex justify-center items-center gap-2 transition-all";
-                btnPickup.className = "w-1/2 py-2 text-sm font-medium rounded-lg text-gray-600 flex justify-center items-center gap-2 transition-all";
-                geoSection.classList.remove("hidden");
+                btnDeliv.className = "w-1/2 py-2.5 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-xs flex justify-center items-center gap-2 transition-all";
+                btnPickup.className = "w-1/2 py-2.5 text-sm font-bold rounded-lg text-slate-600 flex justify-center items-center gap-2 transition-all";
+                mapSection.classList.remove("hidden");
             } else {
-                btnPickup.className = "w-1/2 py-2 text-sm font-medium rounded-lg bg-white text-orange-600 shadow-xs flex justify-center items-center gap-2 transition-all";
-                btnDeliv.className = "w-1/2 py-2 text-sm font-medium rounded-lg text-gray-600 flex justify-center items-center gap-2 transition-all";
-                geoSection.classList.add("hidden");
+                btnPickup.className = "w-1/2 py-2.5 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-xs flex justify-center items-center gap-2 transition-all";
+                btnDeliv.className = "w-1/2 py-2.5 text-sm font-bold rounded-lg text-slate-600 flex justify-center items-center gap-2 transition-all";
+                mapSection.classList.add("hidden");
             }
+        }
+
+        function moveMapPin(event) {
+            const mapBox = document.getElementById("mock-map");
+            const rect = mapBox.getBoundingClientRect();
+            const clickX = ((event.clientX - rect.left) / rect.width) * 100;
+            const clickY = ((event.clientY - rect.top) / rect.height) * 100;
+            
+            mapCoordinates = { x: clickX.toFixed(1), y: clickY.toFixed(1) };
+            
+            const pin = document.getElementById("map-pin");
+            pin.style.left = `${clickX}%`;
+            pin.style.top = `${clickY}%`;
         }
 
         function renderClientMenu() {
-            const container = document.getElementById("menu-container");
-            container.innerHTML = "";
+            const box = document.getElementById("client-menu-box");
+            box.innerHTML = "";
             products.forEach(p => {
-                const qty = cart[p.id] || 0;
-                container.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl shadow-xs border border-gray-100 flex gap-3 items-center">
-                        <img src="${p.img}" alt="${p.name}" class="w-20 h-20 object-cover rounded-lg bg-gray-100">
-                        <div class="flex-1">
-                            <h3 class="font-bold text-gray-900 text-sm">${p.name}</h3>
-                            <p class="text-orange-600 font-extrabold text-base mt-1">$${p.price.toFixed(2)}</p>
+                box.innerHTML += `
+                    <div class="bg-white p-3 rounded-2xl shadow-xs border border-slate-100 flex gap-4 items-center">
+                        <img onclick="triggerLightbox('${p.img}')" src="${p.img}" alt="${p.name}" class="w-20 h-20 object-cover rounded-xl bg-slate-100 cursor-zoom-in border border-slate-100 hover:scale-105 transition-all">
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold text-slate-900 text-sm truncate">${p.name}</h3>
+                            <p class="text-xs text-slate-400 mt-0.5 truncate">${p.ingredients ? p.ingredients.join(', ') : 'Sin especificar'}</p>
+                            <p class="text-indigo-600 font-black text-base mt-1">$${p.price.toFixed(2)}</p>
                         </div>
-                        <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 p-1 rounded-lg">
-                            <button onclick="updateQty(${p.id}, -1)" class="w-7 h-7 flex items-center justify-center bg-white border rounded text-gray-600 font-bold hover:bg-gray-100">-</button>
-                            <span class="text-sm font-bold w-4 text-center text-gray-800">${qty}</span>
-                            <button onclick="updateQty(${p.id}, 1)" class="w-7 h-7 flex items-center justify-center bg-white border rounded text-gray-600 font-bold hover:bg-gray-100">+</button>
-                        </div>
+                        <button onclick="launchCustomModal(${p.id})" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 p-2.5 rounded-xl transition-all">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                        </button>
                     </div>
                 `;
             });
+            lucide.createIcons();
         }
 
-        function updateQty(id, delta) {
-            if (!cart[id]) cart[id] = 0;
-            cart[id] += delta;
-            if (cart[id] <= 0) delete cart[id];
-            renderClientMenu();
-            updateCartUI();
-        }
+        // CONTROL DE MODAL DE COMPRA (INGREDIENTES Y NOTAS EXTRA)
+        function launchCustomModal(productId) {
+            const prod = products.find(p => p.id === productId);
+            if (!prod) return;
+            activeProductForCustomization = prod;
 
-        function updateCartUI() {
-            let total = 0;
-            Object.keys(cart).forEach(id => {
-                let p = products.find(prod => prod.id == id);
-                if (p) total += p.price * cart[id];
-            });
-            document.getElementById("cart-total").innerText = `$${total.toFixed(2)}`;
-        }
+            document.getElementById("cust-modal-title").innerText = prod.name;
+            document.getElementById("cust-modal-price").innerText = `$${prod.price.toFixed(2)}`;
+            document.getElementById("cust-modal-notes").value = "";
 
-        function placeOrder() {
-            let itemKeys = Object.keys(cart);
-            if (itemKeys.length === 0) return alert("🛒 ¡Tu carrito está vacío! Añade un antojo.");
+            const ingContainer = document.getElementById("ingredients-checkboxes-box");
+            ingContainer.innerHTML = "";
             
-            let address = document.getElementById("client-address").value;
-            let phone = document.getElementById("client-phone").value || "521";
-
-            if (deliveryMode === "delivery" && !address.trim()) {
-                return alert("📍 Por favor escribe tu dirección o referencia en el mapa.");
+            if (prod.ingredients && prod.ingredients.length > 0) {
+                prod.ingredients.forEach((ing, index) => {
+                    ingContainer.innerHTML += `
+                        <label class="flex items-center gap-2.5 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+                            <input type="checkbox" checked value="${ing}" class="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500">
+                            <span>${ing}</span>
+                        </label>
+                    `;
+                });
+            } else {
+                ingContainer.innerHTML = `<p class="text-slate-400 text-xs">Este producto no cuenta con ingredientes modificables.</p>`;
             }
 
-            let orderItems = itemKeys.map(id => {
-                let p = products.find(prod => prod.id == id);
-                return { name: p.name, qty: cart[id] };
+            document.getElementById("custom-order-modal").classList.add("active");
+        }
+
+        function closeCustomModal() {
+            document.getElementById("custom-order-modal").classList.remove("active");
+            activeProductForCustomization = null;
+        }
+
+        function commitToCart() {
+            if (!activeProductForCustomization) return;
+            
+            const ingContainer = document.getElementById("ingredients-checkboxes-box");
+            const inputs = ingContainer.querySelectorAll("input[type='checkbox']");
+            let excludedIngredients = [];
+            
+            inputs.forEach(input => {
+                if (!input.checked) {
+                    excludedIngredients.push(input.value);
+                }
             });
 
-            let total = itemKeys.reduce((acc, id) => {
-                let p = products.find(prod => prod.id == id);
-                return acc + (p.price * cart[id]);
-            }, 0);
+            let clientNotes = document.getElementById("cust-modal-notes").value.trim();
 
-            let newOrder = {
+            cart.push({
+                product: activeProductForCustomization,
+                excluded: excludedIngredients,
+                notes: clientNotes
+            });
+
+            closeCustomModal();
+            updateCartPriceSum();
+        }
+
+        function updateCartPriceSum() {
+            let sum = cart.reduce((acc, entry) => acc + entry.product.price, 0);
+            document.getElementById("cart-total").innerText = `$${sum.toFixed(2)}`;
+        }
+
+        function submitClientOrder() {
+            if (cart.length === 0) return alert("🛒 Agregue al menos un artículo a su orden.");
+            
+            let name = document.getElementById("client-name").value.trim();
+            let phone = document.getElementById("client-phone").value.trim();
+            let address = document.getElementById("client-address").value.trim();
+
+            if (!name || !phone) {
+                return alert("👤 Nombre y teléfono de WhatsApp son requeridos obligatoriamente para procesar su orden.");
+            }
+
+            if (selectedDeliveryType === "delivery" && !address) {
+                return alert("📍 Para entregas a domicilio debe indicar la calle y referencias de su casa.");
+            }
+
+            let orderData = {
                 id: Date.now().toString().slice(-4),
-                clientPhone: phone,
-                address: deliveryMode === "delivery" ? address : "Recoge en Tienda",
-                mode: deliveryMode,
-                items: orderItems,
-                total: total,
+                customerName: name,
+                customerPhone: phone,
+                deliveryMode: selectedDeliveryType,
+                addressDetails: selectedDeliveryType === "delivery" ? address : "Recoge en Sucursal",
+                mapCoordinates: selectedDeliveryType === "delivery" ? { ...mapCoordinates } : null,
+                items: [...cart],
+                totalAmount: cart.reduce((acc, entry) => acc + entry.product.price, 0),
                 status: "Pendiente"
             };
 
-            orders.push(newOrder);
-            
-            // Simular envío a WhatsApp del negocio
-            let txt = `*NUEVO PEDIDO %23${newOrder.id}*%0A%0A`;
-            newOrder.items.forEach(i => txt += `• ${i.qty}x ${i.name}%0A`);
-            txt += `%0A*Entrega:* ${newOrder.address}%0A*Total:* $${total.toFixed(2)}`;
-            
-            alert("🚀 ¡Pedido Procesado Exitosamente!");
-            window.open(`https://wa.me/${newOrder.clientPhone}?text=${txt}`, '_blank');
+            orders.push(orderData);
+            saveToStorage();
 
-            // Limpieza
-            cart = {};
+            // Construir cadena de texto formateada para WhatsApp
+            let textMsg = `*NUEVO PEDIDO INTERNO %23${orderData.id}*%0A`;
+            textMsg += `*Cliente:* ${orderData.customerName}%0A`;
+            textMsg += `*Modalidad:* ${selectedDeliveryType === 'delivery' ? 'A Domicilio' : 'Recoger en local'}%0A%0A`;
+            textMsg += `*Detalle del Pedido:*%0A`;
+            
+            orderData.items.forEach(item => {
+                textMsg += `• _${item.product.name}_ ($${item.product.price})%0A`;
+                if(item.excluded.length > 0) textMsg += `   - _Quitar:_ ${item.excluded.join(', ')}%0A`;
+                if(item.notes) textMsg += `   - _Nota:_ "${item.notes}"%0A`;
+            });
+
+            textMsg += `%0A*Monto Total:* $${orderData.totalAmount.toFixed(2)}%0A`;
+            if (orderData.deliveryMode === 'delivery') {
+                textMsg += `*Dirección:* ${orderData.addressDetails}%0A`;
+                textMsg += `*Ubicación Pin:* Cuadrante X:${orderData.mapCoordinates.x} Y:${orderData.mapCoordinates.y}`;
+            }
+
+            alert("🚀 ¡Su orden ha sido transmitida e ingresada al sistema del negocio!");
+            window.open(`https://wa.me/${orderData.customerPhone}?text=${textMsg}`, '_blank');
+
+            // Limpieza e inicialización de campos
+            cart = [];
+            document.getElementById("client-name").value = "";
+            document.getElementById("client-phone").value = "";
             document.getElementById("client-address").value = "";
-            updateCartUI();
+            updateCartPriceSum();
             renderClientMenu();
             renderAdminOrders();
+            renderDeliveryOrders();
         }
 
-        // --- MÓDULO: REPARTIDOR / ADMÓN (NOTIFICACIONES Y MAPAS) ---
-        function renderAdminOrders() {
-            const container = document.getElementById("orders-list-container");
+        // --- CAPA EXCLUSIVA REPARTIDOR ---
+        function renderDeliveryOrders() {
+            const container = document.getElementById("delivery-orders-container");
             container.innerHTML = "";
 
-            if (orders.length === 0) {
-                container.innerHTML = `<p class='text-sm text-gray-400 text-center py-6'>No hay pedidos pendientes hoy.</p>`;
+            let deliveryList = orders.filter(o => o.deliveryMode === 'delivery');
+
+            if (deliveryList.length === 0) {
+                container.innerHTML = `<div class='text-center py-8 text-slate-400 text-sm font-medium'><i data-lucide='inbox' class='w-8 h-8 mx-auto opacity-40 mb-2'></i>No hay rutas asignadas o pendientes por entregar.</div>`;
                 return;
             }
 
-            orders.forEach(o => {
-                let itemsSummary = o.items.map(i => `${i.qty}x ${i.name}`).join(', ');
-                
-                // Botones dinámicos basados en estatus
-                let actionButtons = "";
-                if (o.status === "Pendiente") {
-                    actionButtons = `
-                        <button onclick="changeStatus('${o.id}', 'Preparando')" class="bg-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg">Aceptar Cocina</button>
-                    `;
-                } else if (o.status === "Preparando") {
-                    actionButtons = `
-                        <button onclick="sendWhatsAppNotify('${o.id}', 'Listo en 10 minutos')" class="border border-green-500 text-green-600 text-xs font-bold px-2 py-1.5 rounded-lg flex items-center gap-1"><i data-lucide="message-square" class="w-3.5 h-3.5"></i> Notificar 10m</button>
-                        <button onclick="changeStatus('${o.id}', 'Listo')" class="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg">¡Está Listo!</button>
-                    `;
-                } else if (o.status === "Listo") {
-                    if (o.mode === "delivery") {
-                        actionButtons = `
-                            <button onclick="openDeepMap('${o.address}')" class="bg-sky-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1"><i data-lucide="map" class="w-3.5 h-3.5"></i> Ver Ruta (Repartidor)</button>
-                            <button onclick="completeOrder('${o.id}')" class="bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg">Entregado</button>
-                        `;
-                    } else {
-                        actionButtons = `
-                            <button onclick="completeOrder('${o.id}')" class="bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg">Entregado a Cliente</button>
-                        `;
-                    }
-                }
-
+            deliveryList.forEach(o => {
+                let itemsList = o.items.map(i => i.product.name).join(', ');
                 container.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-xs space-y-3">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs space-y-3">
                         <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-sm font-black text-gray-900">Pedido #${o.id}</span>
-                                <span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full ${o.mode==='delivery'?'bg-purple-100 text-purple-700':'bg-blue-100 text-blue-700'}">${o.mode==='delivery'?'Domicilio':'Recoger'}</span>
-                            </div>
-                            <span class="text-xs font-bold px-2 py-1 bg-gray-100 rounded text-gray-700 border">${o.status}</span>
+                            <span class="text-sm font-black text-slate-900">Entrega #${o.id}</span>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100">${o.status}</span>
                         </div>
-                        <p class="text-xs text-gray-600"><strong class="text-gray-900">Detalle:</strong> ${itemsSummary}</p>
-                        <p class="text-xs text-gray-600"><strong class="text-gray-900">Dirección:</strong> ${o.address}</p>
-                        <div class="pt-2 border-t border-gray-50 flex justify-between items-center">
-                            <span class="text-sm font-black text-gray-900">$${o.total.toFixed(2)}</span>
-                            <div class="flex gap-1.5">${actionButtons}</div>
+                        <div class="text-xs space-y-1 text-slate-600">
+                            <p><strong class="text-slate-900">Cliente:</strong> ${o.customerName}</p>
+                            <p><strong class="text-slate-900">WhatsApp:</strong> ${o.customerPhone}</p>
+                            <p><strong class="text-slate-900">Dirección:</strong> ${o.addressDetails}</p>
+                            <p><strong class="text-slate-900">Items:</strong> ${itemsList}</p>
+                        </div>
+                        <div class="pt-2 border-t border-slate-50 flex gap-2">
+                            <button onclick="triggerSystemDeepMap('${o.addressDetails}')" class="w-1/2 bg-indigo-600 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs">
+                                <i data-lucide="map" class="w-4 h-4"></i> Abrir Navegador
+                            </button>
+                            <button onclick="finalizeOrderFromRole('${o.id}')" class="w-1/2 bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs">
+                                <i data-lucide="check" class="w-4 h-4"></i> Completado
+                            </button>
                         </div>
                     </div>
                 `;
@@ -375,56 +531,59 @@
             lucide.createIcons();
         }
 
-        function changeStatus(id, newStatus) {
-            let o = orders.find(ord => ord.id == id);
-            if (o) o.status = newStatus;
-            renderAdminOrders();
-        }
-
-        function sendWhatsAppNotify(id, messageType) {
-            let o = orders.find(ord => ord.id == id);
-            if (!o) return;
-            let text = `¡Hola! Tu pedido *#${o.id}* de Pizzas & Tacos El Chano ya está en preparación y estará *${messageType}*. 🍕🔥`;
-            window.open(`https://wa.me/${o.clientPhone}?text=${encodeURIComponent(text)}`, '_blank');
-        }
-
-        function openDeepMap(address) {
-            // El deep link universal que se enlaza directo a la app nativa de mapas del celular
+        function triggerSystemDeepMap(address) {
             let url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
             window.open(url, '_blank');
         }
 
-        function completeOrder(id) {
-            let index = orders.findIndex(ord => ord.id == id);
-            if (index !== -1) {
-                let ord = orders.splice(index, 1)[0];
-                salesHistory.push(ord);
-                calculateSales();
-                renderAdminOrders();
-            }
-        }
-
-        function calculateSales() {
-            let total = salesHistory.reduce((acc, o) => acc + o.total, 0);
-            document.getElementById("sales-total-amount").innerText = `$${total.toFixed(2)}`;
-            document.getElementById("sales-count").innerText = salesHistory.length;
-        }
-
-        // --- MÓDULO: CRUD DE PRODUCTOS ---
-        function renderAdminProducts() {
-            const container = document.getElementById("admin-products-grid");
+        // --- CAPA 3: PANEL ADMINISTRADOR Y CONTROL DE FINANZAS ---
+        function renderAdminOrders() {
+            const container = document.getElementById("admin-orders-container");
             container.innerHTML = "";
-            products.forEach(p => {
+
+            if (orders.length === 0) {
+                container.innerHTML = `<div class='text-center py-10 text-slate-400 text-sm font-medium'><i data-lucide='check-square' class='w-10 h-10 mx-auto opacity-30 mb-2'></i>Bandeja vacía. No hay órdenes activas en procesamiento.</div>`;
+                return;
+            }
+
+            orders.forEach(o => {
+                let actionBtn = "";
+                if(o.status === "Pendiente") {
+                    actionBtn = `<button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs">Colocar en Cocina</button>`;
+                } else if(o.status === "Preparando") {
+                    actionBtn = `
+                        <button onclick="pushStatusWhatsApp('${o.id}', '10 minutos')" class="border border-green-600 text-green-700 hover:bg-green-50 text-xs font-bold px-2.5 py-1.5 rounded-xl flex items-center gap-1"><i data-lucide="message-circle" class="w-4 h-4"></i> Avisar 10 min</button>
+                        <button onclick="updateOrderStatus('${o.id}', 'Listo')" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs">Marcar como Listo</button>
+                    `;
+                } else if(o.status === "Listo") {
+                    actionBtn = `<button onclick="finalizeOrderFromRole('${o.id}')" class="bg-slate-900 hover:bg-black text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs">Despachar / Entregado</button>`;
+                }
+
+                let itemsDetailsHtml = "";
+                o.items.forEach(i => {
+                    itemsDetailsHtml += `<li class="text-xs text-slate-700 font-medium">• ${i.product.name}`;
+                    if(i.excluded.length > 0) itemsDetailsHtml += ` <span class="text-red-500 font-normal">(Quitar: ${i.excluded.join(', ')})</span>`;
+                    if(i.notes) itemsDetailsHtml += ` <span class="text-indigo-600 font-normal italic">"${i.notes}"</span>`;
+                    itemsDetailsHtml += `</li>`;
+                });
+
                 container.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl border flex gap-3 items-center shadow-xs">
-                        <img src="${p.img}" class="w-14 h-14 object-cover rounded-lg">
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-sm text-gray-900 truncate">${p.name}</h4>
-                            <p class="text-xs text-gray-500 font-medium">$${p.price.toFixed(2)}</p>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-sm font-black text-slate-900">Orden #${o.id}</span>
+                                <span class="ml-2 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${o.deliveryMode === 'delivery' ? 'bg-purple-50 text-purple-700 border border-purple-100':'bg-amber-50 text-amber-700 border border-amber-100'}">${o.deliveryMode==='delivery'?'Domicilio':'Recoge'}</span>
+                            </div>
+                            <span class="text-xs font-bold px-2 py-1 bg-slate-100 rounded-lg text-slate-700 border border-slate-200">${o.status}</span>
                         </div>
-                        <div class="flex gap-1">
-                            <button onclick="openProductModal(${p.id})" class="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
-                            <button onclick="deleteProduct(${p.id})" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
+                        <div class="bg-slate-50 p-2.5 rounded-xl space-y-1 text-xs">
+                            <p class="text-slate-500"><strong class="text-slate-800">Cliente:</strong> ${o.customerName} (${o.customerPhone})</p>
+                            <p class="text-slate-500"><strong class="text-slate-800">Dirección:</strong> ${o.addressDetails}</p>
+                            <ul class="mt-2 space-y-0.5 border-t border-slate-200/60 pt-2">${itemsDetailsHtml}</ul>
+                        </div>
+                        <div class="flex justify-between items-center pt-1">
+                            <span class="text-base font-black text-slate-900">$${o.totalAmount.toFixed(2)}</span>
+                            <div class="flex gap-2">${actionBtn}</div>
                         </div>
                     </div>
                 `;
@@ -432,56 +591,188 @@
             lucide.createIcons();
         }
 
-        function openProductModal(id = null) {
-            const modal = document.getElementById("product-modal");
+        function updateOrderStatus(id, nextStatus) {
+            let o = orders.find(ord => ord.id == id);
+            if(o) o.status = nextStatus;
+            saveToStorage();
+            renderAdminOrders();
+            renderDeliveryOrders();
+        }
+
+        function pushStatusWhatsApp(id, estimateTime) {
+            let o = orders.find(ord => ord.id == id);
+            if (!o) return;
+            let text = `¡Hola *${o.customerName}*! Tu orden con folio *#${o.id}* está en cocina y se encontrará lista en un estimado de *${estimateTime}*. ¡Gracias por tu preferencia!`;
+            window.open(`https://wa.me/${o.customerPhone}?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function finalizeOrderFromRole(id) {
+            let idx = orders.findIndex(ord => ord.id == id);
+            if (idx !== -1) {
+                let resolvedOrder = orders.splice(idx, 1)[0];
+                resolvedOrder.status = "Liquidado y Entregado";
+                currentShiftSales.push(resolvedOrder);
+                
+                saveToStorage();
+                renderAdminOrders();
+                renderDeliveryOrders();
+                calculateFinanceSummary();
+            }
+        }
+
+        function calculateFinanceSummary() {
+            let total = currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0);
+            document.getElementById("live-sales-amount").innerText = `$${total.toFixed(2)}`;
+            document.getElementById("live-sales-count").innerText = `${currentShiftSales.length} órdenes liquidadas en el turno activo`;
+        }
+
+        // CIERRE DE CAJA E HISTORIAL PERMANENTE
+        function closeCurrentShift() {
+            if (currentShiftSales.length === 0) return alert("📊 No existen transacciones en este turno para archivar.");
+            
+            if (confirm("¿Confirmas que deseas realizar el corte, cerrar el día y archivar el dinero acumulado?")) {
+                let totalTurno = currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0);
+                let dateStamp = new Date().toLocaleString();
+                
+                archivedShifts.unshift({
+                    id: Date.now(),
+                    date: dateStamp,
+                    ordersCount: currentShiftSales.length,
+                    revenue: totalTurno
+                });
+
+                currentShiftSales = []; // Vaciar turno
+                saveToStorage();
+                
+                calculateFinanceSummary();
+                renderArchivedShifts();
+                alert("🔒 Corte de caja cerrado y archivado de manera exitosa.");
+            }
+        }
+
+        function renderArchivedShifts() {
+            const container = document.getElementById("archived-shifts-box");
+            container.innerHTML = "";
+
+            if (archivedShifts.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">No se registran cortes de caja anteriores en el historial.</p>`;
+                return;
+            }
+
+            archivedShifts.forEach(s => {
+                container.innerHTML += `
+                    <div class="bg-white p-3 rounded-xl border border-slate-200/80 flex justify-between items-center shadow-2xs">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">${s.date}</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">${s.ordersCount} órdenes consolidadas</p>
+                        </div>
+                        <span class="text-sm font-black text-slate-900 bg-slate-50 border px-3 py-1 rounded-lg">$${s.revenue.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // --- GESTIÓN INTERNA (CRUD DE PRODUCTOS) ---
+        function renderAdminProducts() {
+            const grid = document.getElementById("admin-products-grid");
+            grid.innerHTML = "";
+            products.forEach(p => {
+                grid.innerHTML += `
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 flex gap-3 items-center shadow-2xs">
+                        <img src="${p.img}" class="w-14 h-14 object-cover rounded-lg bg-slate-50 border border-slate-100">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-xs text-slate-900 truncate">${p.name}</h4>
+                            <p class="text-[11px] text-slate-400 truncate">${p.ingredients ? p.ingredients.join(', ') : 'Sin ingredientes'}</p>
+                            <p class="text-xs text-indigo-600 font-extrabold mt-0.5">$${p.price.toFixed(2)}</p>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="triggerProductModal(${p.id})" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="deleteProductFromInventory(${p.id})" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function triggerProductModal(id = null) {
+            const modal = document.getElementById("product-crud-modal");
             modal.classList.add("active");
-            if (id) {
+            
+            if(id) {
                 let p = products.find(prod => prod.id === id);
-                document.getElementById("modal-title").innerText = "Editar Producto";
-                document.getElementById("form-product-id").value = p.id;
-                document.getElementById("form-product-name").value = p.name;
-                document.getElementById("form-product-price").value = p.price;
-                document.getElementById("form-product-img").value = p.img;
+                document.getElementById("crud-modal-title").innerText = "Editar Item de Menú";
+                document.getElementById("crud-id").value = p.id;
+                document.getElementById("crud-name").value = p.name;
+                document.getElementById("crud-price").value = p.price;
+                document.getElementById("crud-img").value = p.img;
+                document.getElementById("crud-ingredients").value = p.ingredients ? p.ingredients.join(', ') : "";
             } else {
-                document.getElementById("modal-title").innerText = "Agregar Producto";
-                document.getElementById("form-product-id").value = "";
-                document.getElementById("form-product-name").value = "";
-                document.getElementById("form-product-price").value = "";
-                document.getElementById("form-product-img").value = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400";
+                document.getElementById("crud-modal-title").innerText = "Nuevo Item de Menú";
+                document.getElementById("crud-id").value = "";
+                document.getElementById("crud-name").value = "";
+                document.getElementById("crud-price").value = "";
+                document.getElementById("crud-img").value = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500";
+                document.getElementById("crud-ingredients").value = "";
             }
         }
 
-        function closeProductModal() {
-            document.getElementById("product-modal").classList.remove("active");
+        function closeCrudModal() {
+            document.getElementById("product-crud-modal").classList.remove("active");
         }
 
-        function saveProduct() {
-            let id = document.getElementById("form-product-id").value;
-            let name = document.getElementById("form-product-name").value;
-            let price = parseFloat(document.getElementById("form-product-price").value);
-            let img = document.getElementById("form-product-img").value;
+        function saveCrudProduct() {
+            let id = document.getElementById("crud-id").value;
+            let name = document.getElementById("crud-name").value.trim();
+            let price = parseFloat(document.getElementById("crud-price").value);
+            let img = document.getElementById("crud-img").value.trim();
+            let rawIngredients = document.getElementById("crud-ingredients").value.trim();
 
-            if (!name || !price) return alert("Completa los campos obligatorios");
+            if (!name || isNaN(price)) return alert("Por favor complete los campos obligatorios de nombre y precio.");
 
-            if (id) {
-                // Modificar
-                let p = products.find(prod => prod.id == id);
-                p.name = name; p.price = price; p.img = img;
+            let processedIngredients = rawIngredients ? rawIngredients.split(',').map(i => i.trim()).filter(i => i !== "") : [];
+
+            if(id) {
+                let target = products.find(prod => prod.id == id);
+                if(target) {
+                    target.name = name;
+                    target.price = price;
+                    target.img = img;
+                    target.ingredients = processedIngredients;
+                }
             } else {
-                // Crear
-                products.push({ id: Date.now(), name, price, img });
+                products.push({
+                    id: Date.now(),
+                    name: name,
+                    price: price,
+                    img: img,
+                    ingredients: processedIngredients
+                });
             }
-            closeProductModal();
+
+            saveToStorage();
+            closeCrudModal();
             renderClientMenu();
             renderAdminProducts();
         }
 
-        function deleteProduct(id) {
-            if (confirm("¿Seguro que quieres eliminar este producto del menú?")) {
+        function deleteProductFromInventory(id) {
+            if(confirm("¿Seguro que deseas remover este producto de forma definitiva de tu base de datos?")) {
                 products = products.filter(p => p.id !== id);
+                saveToStorage();
                 renderClientMenu();
                 renderAdminProducts();
             }
+        }
+
+        // --- SISTEMA AUXILIAR VISOR DE IMAGENES ---
+        function triggerLightbox(imageSrc) {
+            document.getElementById("lightbox-img").src = imageSrc;
+            document.getElementById("lightbox-modal").classList.add("active");
+        }
+
+        function closeLightbox() {
+            document.getElementById("lightbox-modal").classList.remove("active");
         }
     </script>
 </body>
