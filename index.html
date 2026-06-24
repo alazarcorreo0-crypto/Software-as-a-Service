@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiPedidOS Premium - Cloud Base</title>
+    <title>MultiPedidOS Premium - Cloud Base Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -260,7 +260,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 🔥 TUS CREDENCIALES DE PROYECTO INYECTADAS DIRECTAMENTE
+        // 🔥 TUS CREDENCIALES INTEGRADAS AL 100%
         const firebaseConfig = {
             apiKey: "AIzaSyDWhY0PYSJ1w1enQ98lE8hVBl5oaZf5CKE",
             authDomain: "multi-pedidos.firebaseapp.com",
@@ -285,8 +285,7 @@
         let bizSettings = { whatsappActive: true, whatsappPhone: "" };
         let cart = []; let activeProductForCustomization = null; let selectedDeliveryType = "delivery";
 
-        // --- ESCUCHADORES DINÁMICOS CLOUD (SINCRONIZACIÓN AUTOMÁTICA) ---
-        
+        // --- ESCUCHADORES DINÁMICOS CLOUD ---
         onSnapshot(productsCol, (snapshot) => {
             products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             if(products.length === 0) {
@@ -540,7 +539,7 @@
             const container = document.getElementById("archived-shifts-box"); container.innerHTML = "";
             if(archivedShifts.length === 0) { container.innerHTML = "<p class='text-xs font-bold text-slate-400 italic text-center py-4'>Sin bitácoras guardadas en la nube.</p>"; return; }
             archivedShifts.forEach(s => {
-                container.innerHTML += `<div class="bg-white p-4 rounded-2xl border flex justify-between text-xs font-bold shadow-2xs"><div><span>${s.date}</span><p class="text-[10px] text-slate-400 font-medium mt-0.5">${s.ordersCount} comandas</p></div><span class="bg-slate-50 border px-3 py-1.5 rounded-xl text-slate-900">$${s.revenue.toFixed(2)}</span></div>`;
+                container.innerHTML += `<div class="bg-white p-4 rounded-2xl border flex justify-between text-xs font-bold shadow-2xs"><div><span>${s.date}</span><p class="text-[10px] text-slate-400 font-medium mt-0.5">${s.ordersCount} órdenes</p></div><span class="bg-slate-50 border px-3 py-1.5 rounded-xl text-slate-900">$${s.revenue.toFixed(2)}</span></div>`;
             });
         }
 
@@ -585,7 +584,7 @@
         window.closeLightbox = function() { document.getElementById("lightbox-modal").classList.remove("active"); }
 
         window.accessRole = function(role, passKey) {
-            let p = prompt(`Contraseña:`);
+            let p = prompt("Contraseña:");
             if (p === passKey) {
                 activeRoleMode = role;
                 document.getElementById("view-client").classList.add("hidden"); document.getElementById("cart-bar").classList.add("hidden"); document.getElementById("view-admin").classList.add("hidden"); document.getElementById("view-delivery").classList.add("hidden");
