@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS MultiPedidOS - Sistema de Gestión e Interfaz de Órdenes Profesional</title>
+    <title>MultiPedidOS Premium - Sistema de Gestión de Órdenes</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -13,178 +13,193 @@
     <style>
         .modal { display: none; }
         .modal.active { display: flex; }
-        /* Evitar que Tailwind tape los controles del mapa real */
         #real-map { z-index: 1; }
+        /* Personalización de scrollbar tipo app móvil */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased pb-28">
+<body class="bg-[#FAFAFA] text-slate-900 font-sans antialiased pb-32">
 
-    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3 flex justify-between items-center border-b border-slate-100">
-        <div>
-            <h1 class="text-xl font-black text-indigo-600 flex items-center gap-1.5 tracking-tight">
-                <i data-lucide="store" class="w-6 h-6"></i> MultiPedidOS
-            </h1>
-            <p class="text-xs text-slate-400 font-medium">Plataforma Digital de Pedidos</p>
+    <header class="bg-white shadow-xs sticky top-0 z-40 px-4 py-3 flex justify-between items-center border-b border-slate-100">
+        <div class="flex items-center gap-2">
+            <div class="bg-[#06C167] text-white p-2 rounded-xl shadow-xs">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-black text-slate-900 tracking-tight flex items-center gap-1">
+                    MultiPedidOS <span class="text-xs bg-slate-900 text-white font-bold px-1.5 py-0.5 rounded-md">SaaS</span>
+                </h1>
+                <p class="text-[11px] text-slate-400 font-medium">Logística comercial inteligente</p>
+            </div>
         </div>
         <div class="flex gap-2">
-            <button onclick="accessRole('delivery_user', '456')" id="btn-rep-mode" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all">
-                <i data-lucide="bike" class="w-4 h-4"></i> Repartidor (456)
+            <button onclick="accessRole('delivery_user', '456')" id="btn-rep-mode" class="bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/60 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                <i data-lucide="bike" class="w-4 h-4 text-[#06C167]"></i> Repartidor (456)
             </button>
-            <button onclick="accessRole('admin_user', '123')" id="btn-admin-mode" class="bg-slate-900 hover:bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all">
-                <i data-lucide="shield" class="w-4 h-4"></i> Admin (123)
+            <button onclick="accessRole('admin_user', '123')" id="btn-admin-mode" class="bg-slate-900 hover:bg-black text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm">
+                <i data-lucide="shield" class="w-4 h-4 text-emerald-400"></i> Admin (123)
             </button>
         </div>
     </header>
 
-    <div id="role-banner" class="hidden bg-indigo-50 border-b border-indigo-100 px-4 py-2 text-xs font-semibold text-indigo-700 flex justify-between items-center">
-        <span id="role-banner-text">Modo de visualización actual</span>
-        <button onclick="exitRoles()" class="underline text-indigo-900 hover:no-underline">Volver a Vista Cliente</button>
+    <div id="role-banner" class="hidden bg-slate-900 border-b border-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-300 flex justify-between items-center shadow-inner">
+        <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-[#06C167] rounded-full animate-ping"></span>
+            <span id="role-banner-text">Modo de visualización actual</span>
+        </div>
+        <button onclick="exitRoles()" class="bg-[#06C167] text-white font-bold px-2.5 py-1 rounded-lg hover:bg-emerald-600 transition-all shadow-xs">
+            Volver a Vista Cliente
+        </button>
     </div>
 
     <main id="view-client" class="max-w-md mx-auto px-4 mt-5 space-y-6">
         
-        <div class="bg-slate-100 p-1.5 rounded-xl flex">
-            <button onclick="setDeliveryType('delivery')" id="type-deliv" class="w-1/2 py-2.5 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-xs flex justify-center items-center gap-2 transition-all">
-                <i data-lucide="truck" class="w-4 h-4"></i> Entrega a Domicilio
+        <div class="bg-slate-100 p-1 rounded-2xl flex border border-slate-200/40">
+            <button onclick="setDeliveryType('delivery')" id="type-deliv" class="w-1/2 py-3 text-xs font-black rounded-xl bg-white text-slate-900 shadow-xs flex justify-center items-center gap-2 transition-all">
+                <i data-lucide="truck" class="w-4 h-4 text-[#06C167]"></i> Entrega a Domicilio
             </button>
-            <button onclick="setDeliveryType('pickup')" id="type-pickup" class="w-1/2 py-2.5 text-sm font-bold rounded-lg text-slate-600 flex justify-center items-center gap-2 transition-all">
-                <i data-lucide="shopping-bag" class="w-4 h-4"></i> Recoger en Tienda
+            <button onclick="setDeliveryType('pickup')" id="type-pickup" class="w-1/2 py-3 text-xs font-black rounded-xl text-slate-500 flex justify-center items-center gap-2 transition-all">
+                <i data-lucide="store" class="w-4 h-4"></i> Recoger en Tienda
             </button>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-100 space-y-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                <i data-lucide="user-check" class="w-4 h-4 text-indigo-500"></i> Información de Entrega
+        <div class="bg-white p-5 rounded-3xl shadow-xs border border-slate-100 space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-4 h-4 text-[#06C167]"></i> Detalles del Destino
             </h3>
             
             <div class="grid grid-cols-1 gap-3">
-                <input type="text" id="client-name" placeholder="Tu Nombre Completo" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
-                <input type="tel" id="client-phone" placeholder="Tu Celular de contacto (Ej: 5512345678)" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
+                <input type="text" id="client-name" placeholder="Escribe tu Nombre" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200/80 rounded-2xl focus:outline-none focus:border-[#06C167] focus:bg-white transition-all">
+                <input type="tel" id="client-phone" placeholder="Celular (Ej: 5512345678)" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200/80 rounded-2xl focus:outline-none focus:border-[#06C167] focus:bg-white transition-all">
             </div>
 
-            <div id="wrapper-map-section" class="space-y-2">
+            <div id="wrapper-map-section" class="space-y-3">
                 <div class="flex justify-between items-center">
-                    <label class="block text-xs font-bold text-slate-500">Mueve el pin rojo hasta tu ubicación exacta:</label>
-                    <button onclick="locateUserGPS()" type="button" class="text-xs text-indigo-600 font-bold flex items-center gap-0.5 hover:underline bg-indigo-50 px-2 py-1 rounded-lg">
-                        <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> Mi GPS
+                    <label class="block text-xs font-bold text-slate-500">Ajusta el pin en tu casa:</label>
+                    <button onclick="locateUserGPS()" type="button" class="text-xs text-[#06C167] font-black flex items-center gap-1 hover:underline bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100/60 transition-all">
+                        <i data-lucide="crosshair" class="w-3.5 h-3.5 animate-spin-slow"></i> Usar mi GPS
                     </button>
                 </div>
                 
-                <div id="real-map" class="w-full h-52 rounded-xl border border-slate-200 bg-slate-100"></div>
+                <div id="real-map" class="w-full h-56 rounded-2xl border border-slate-200 shadow-inner bg-slate-100 overflow-hidden"></div>
                 
                 <div class="flex gap-2">
-                    <input type="text" id="client-address" placeholder="Dirección, Calle, Número y Colonia" class="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
-                    <button onclick="searchAddressOnMap()" type="button" class="bg-slate-900 text-white px-3 rounded-xl text-xs font-bold hover:bg-black transition-all">Buscar</button>
+                    <input type="text" id="client-address" placeholder="Calle, Número, Colonia o Referencias" class="flex-1 px-4 py-2.5 text-sm bg-slate-50 border border-slate-200/80 rounded-2xl focus:outline-none focus:border-[#06C167] focus:bg-white transition-all">
+                    <button onclick="searchAddressOnMap()" type="button" class="bg-slate-900 text-white px-4 rounded-2xl text-xs font-bold hover:bg-black transition-all shadow-sm">Buscar</button>
                 </div>
-                <p id="coordinates-display" class="text-[10px] text-slate-400 font-mono">Coordenadas: Buscando señal GPS...</p>
+                <div class="flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                    <p id="coordinates-display" class="text-[10px] text-slate-400 font-mono">Coordenadas: No seleccionadas</p>
+                </div>
             </div>
         </div>
 
-        <div class="space-y-3">
-            <h2 class="font-black text-slate-900 text-lg flex items-center gap-1.5">
-                <i data-lucide="layers" class="w-5 h-5 text-indigo-500"></i> Menú Disponible
+        <div class="space-y-4">
+            <h2 class="font-black text-slate-900 text-base tracking-tight flex items-center gap-2">
+                <i data-lucide="utensils" class="w-5 h-5 text-[#06C167]"></i> Menú Seleccionado
             </h2>
-            <div id="client-menu-box" class="grid grid-cols-1 gap-3">
+            <div id="client-menu-box" class="grid grid-cols-1 gap-3.5">
                 </div>
         </div>
     </main>
 
-    <div id="cart-bar" class="fixed bottom-0 inset-x-0 bg-white border-t border-slate-100 p-4 shadow-2xl max-w-md mx-auto z-40 flex justify-between items-center rounded-t-2xl">
+    <div id="cart-bar" class="fixed bottom-0 inset-x-0 bg-white border-t border-slate-100 p-4 shadow-2xl max-w-md mx-auto z-40 flex justify-between items-center rounded-t-3xl">
         <div>
-            <p class="text-xs text-slate-400 font-semibold">Total a pagar</p>
+            <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Monto estimado</p>
             <p id="cart-total" class="text-2xl font-black text-slate-900">$0.00</p>
         </div>
-        <button onclick="submitClientOrder()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 flex items-center gap-2 text-sm transition-all">
-            Confirmar Orden <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        <button onclick="submitClientOrder()" class="bg-[#06C167] hover:bg-emerald-600 text-white font-black px-7 py-3.5 rounded-2xl shadow-lg shadow-emerald-600/20 flex items-center gap-2 text-sm transition-all transform active:scale-95 cursor-pointer">
+            Revisar Pedido <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
     </div>
 
 
     <main id="view-delivery" class="hidden max-w-md mx-auto px-4 mt-5 space-y-4">
-        <div class="flex justify-between items-center">
-            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                <i data-lucide="navigation" class="w-5 h-5 text-indigo-600"></i> Órdenes en Ruta
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100">
+            <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+                <i data-lucide="navigation" class="w-5 h-5 text-[#06C167]"></i> Entregas Asignadas
             </h2>
-            <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-1 rounded-full font-bold">Logística Delivery</span>
+            <span class="bg-emerald-50 text-[#06C167] border border-emerald-100 text-xs px-3 py-1 rounded-full font-black">En Tránsito</span>
         </div>
-        <div id="delivery-orders-container" class="space-y-3">
+        <div id="delivery-orders-container" class="space-y-3.5">
             </div>
     </main>
 
 
     <main id="view-admin" class="hidden max-w-3xl mx-auto px-4 mt-5 space-y-6">
         
-        <div class="border-b border-slate-200 flex gap-6 overflow-x-auto pb-1">
-            <button onclick="toggleAdminTabs('orders')" id="tab-orders" class="border-b-2 border-indigo-600 text-indigo-600 pb-2 text-sm font-bold flex items-center gap-1.5 whitespace-nowrap">
-                <i data-lucide="bell" class="w-4 h-4"></i> Órdenes Activas
+        <div class="border-b border-slate-200 flex gap-6 overflow-x-auto pb-1 bg-white p-3 rounded-2xl border border-slate-100 shadow-2xs">
+            <button onclick="toggleAdminTabs('orders')" id="tab-orders" class="border-b-2 border-[#06C167] text-slate-900 pb-2 text-xs font-black flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                <i data-lucide="clock" class="w-4 h-4 text-[#06C167]"></i> Monitoreo de Órdenes
             </button>
-            <button onclick="toggleAdminTabs('products')" id="tab-products" class="text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
-                <i data-lucide="sliders" class="w-4 h-4"></i> Control de Productos
+            <button onclick="toggleAdminTabs('products')" id="tab-products" class="text-slate-400 pb-2 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                <i data-lucide="layers" class="w-4 h-4"></i> Catálogo e Inventario
             </button>
-            <button onclick="toggleAdminTabs('sales')" id="tab-sales" class="text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
-                <i data-lucide="wallet" class="w-4 h-4"></i> Corte e Historial
+            <button onclick="toggleAdminTabs('sales')" id="tab-sales" class="text-slate-400 pb-2 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                <i data-lucide="trending-up" class="w-4 h-4"></i> Finanzas e Historial
             </button>
-            <button onclick="toggleAdminTabs('settings')" id="tab-settings" class="text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
-                <i data-lucide="settings" class="w-4 h-4"></i> Ajustes SaaS
+            <button onclick="toggleAdminTabs('settings')" id="tab-settings" class="text-slate-400 pb-2 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+                <i data-lucide="sliders" class="w-4 h-4"></i> Ajustes del Canal
             </button>
         </div>
 
         <div id="panel-orders" class="space-y-4">
-            <div id="admin-orders-container" class="space-y-3"></div>
+            <div id="admin-orders-container" class="space-y-4"></div>
         </div>
 
         <div id="panel-products" class="hidden space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-base font-black text-slate-900">Configuración de Catálogo</h3>
-                <button onclick="triggerProductModal()" class="bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs hover:bg-indigo-700 transition-all">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Crear Item
+            <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100">
+                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider text-slate-400">Estructura del Menú</h3>
+                <button onclick="triggerProductModal()" class="bg-[#06C167] hover:bg-emerald-600 text-white text-xs font-black px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Agregar Producto
                 </button>
             </div>
-            <div id="admin-products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+            <div id="admin-products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
         </div>
 
         <div id="panel-sales" class="hidden space-y-6">
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-2xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Caja Acumulada del Turno Actual</p>
-                    <p id="live-sales-amount" class="text-3xl font-black text-emerald-600 mt-1">$0.00</p>
-                    <p id="live-sales-count" class="text-xs text-slate-500 mt-1">0 órdenes liquidadas sin archivar</p>
+                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-wider">Caja del Turno en Curso</p>
+                    <p id="live-sales-amount" class="text-4xl font-black text-[#06C167] mt-1">$0.00</p>
+                    <p id="live-sales-count" class="text-xs text-slate-500 font-medium mt-1">0 comandas sin archivar</p>
                 </div>
-                <button onclick="closeCurrentShift()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all">
-                    <i data-lucide="archive" class="w-4 h-4"></i> Cerrar Día y Archivar Caja
+                <button onclick="closeCurrentShift()" class="w-full sm:w-auto bg-slate-900 hover:bg-black text-white text-xs font-black px-5 py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer">
+                    <i data-lucide="lock" class="w-4 h-4 text-emerald-400"></i> Realizar Corte de Caja
                 </button>
             </div>
             
             <div class="space-y-3">
-                <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5">
-                    <i data-lucide="calendar-days" class="w-4 h-4 text-slate-500"></i> Historial de Cortes Concluidos
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="archive" class="w-4 h-4 text-slate-400"></i> Historial de Cortes Concluidos
                 </h3>
-                <div id="archived-shifts-box" class="space-y-2">
+                <div id="archived-shifts-box" class="space-y-2.5">
                     </div>
             </div>
         </div>
 
         <div id="panel-settings" class="hidden space-y-4">
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs space-y-4">
-                <h3 class="text-base font-black text-slate-900 flex items-center gap-1.5 text-indigo-600">
-                    <i data-lucide="message-square-code"></i> Configuración de Canal WhatsApp
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-2xs space-y-4">
+                <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5 text-slate-400 uppercase tracking-wider">
+                    <i data-lucide="message-circle" class="text-[#06C167]"></i> Ajustes de Transmisión WhatsApp
                 </h3>
                 
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border">
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                     <div>
-                        <p class="text-sm font-bold text-slate-800">Recibir alertas en WhatsApp</p>
-                        <p class="text-xs text-slate-400">Si se apaga, la app solo registrará los pedidos de forma interna.</p>
+                        <p class="text-sm font-black text-slate-800">Alertas redirigidas a WhatsApp</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Si se desactiva, la app opera de manera interna sin desviar al cliente.</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer select-none">
                         <input type="checkbox" id="setting-whatsapp-active" onchange="saveBusinessSettings()" class="sr-only peer" checked>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#06C167]"></div>
                     </label>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-500 block">Número de WhatsApp Destino del Negocio</label>
-                    <input type="tel" id="setting-whatsapp-phone" oninput="saveBusinessSettings()" placeholder="Ej: 5215512345678" class="w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:border-indigo-500">
-                    <p class="text-[10px] text-slate-400 italic">Coloca tu número con código de país, sin espacios ni signos más (+).</p>
+                    <label class="text-xs font-black text-slate-500">Número Celular Destino (Propietario)</label>
+                    <input type="tel" id="setting-whatsapp-phone" oninput="saveBusinessSettings()" placeholder="Ej: 5215512345678" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-[#06C167] focus:bg-white transition-all">
+                    <p class="text-[10px] text-slate-400 font-medium italic mt-1">Coloca código de país sin signos (+) ni espacios. (México: 521, Colombia: 57, etc.)</p>
                 </div>
             </div>
         </div>
@@ -192,104 +207,91 @@
 
 
     <div id="custom-order-modal" class="modal fixed inset-0 bg-slate-950/60 z-50 justify-center items-center p-4 backdrop-blur-xs">
-        <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
             <div class="flex justify-between items-start">
                 <div>
-                    <h3 id="cust-modal-title" class="text-base font-black text-slate-900">Personalizar Producto</h3>
-                    <p id="cust-modal-price" class="text-sm font-extrabold text-indigo-600 mt-0.5"></p>
+                    <h3 id="cust-modal-title" class="text-base font-black text-slate-900 tracking-tight">Personalizar</h3>
+                    <p id="cust-modal-price" class="text-sm font-black text-[#06C167] mt-0.5"></p>
                 </div>
-                <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-1.5 rounded-full border cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
-            <div class="space-y-3">
+            <div class="space-y-4">
                 <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase block mb-2">Ingredientes Incluidos (Desmarca para quitar)</label>
-                    <div id="ingredients-checkboxes-box" class="space-y-1.5 max-h-32 overflow-y-auto pr-1">
-                        </div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">Ingredientes (Quita los que no quieras)</label>
+                    <div id="ingredients-checkboxes-box" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase block mb-1">Notas Especiales o Instrucciones</label>
-                    <textarea id="cust-modal-notes" rows="2" placeholder="Ej: Sin aderezo, términos de cocción, etc." class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1.5">Instrucciones Especiales</label>
+                    <textarea id="cust-modal-notes" rows="2" placeholder="Ej: Sin aderezos, bien cocido, salsa aparte..." class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-[#06C167] focus:bg-white resize-none transition-all"></textarea>
                 </div>
             </div>
-            <button onclick="commitToCart()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl text-sm hover:bg-indigo-700 transition-all flex justify-center items-center gap-1 shadow-md">
-                Añadir al Pedido <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+            <button onclick="commitToCart()" class="w-full bg-[#06C167] text-white font-black py-3 rounded-2xl text-xs hover:bg-emerald-600 transition-all flex justify-center items-center gap-1 shadow-md cursor-pointer">
+                Añadir al Carrito <i data-lucide="shopping-cart" class="w-4 h-4"></i>
             </button>
         </div>
     </div>
 
     <div id="product-crud-modal" class="modal fixed inset-0 bg-slate-950/60 z-50 justify-center items-center p-4 backdrop-blur-xs">
-        <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
-            <h3 id="crud-modal-title" class="text-base font-black text-slate-900">Estructura de Item</h3>
+        <div class="bg-white rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+            <h3 id="crud-modal-title" class="text-base font-black text-slate-900">Estructura del Producto</h3>
             <div class="space-y-3 text-left">
                 <input type="hidden" id="crud-id">
                 <div>
-                    <label class="text-xs font-bold text-slate-500 block mb-1">Nombre Comercial del Producto</label>
-                    <input type="text" id="crud-name" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-indigo-500">
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Nombre Comercial</label>
+                    <input type="text" id="crud-name" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-[#06C167]">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">Precio Unitario ($)</label>
-                    <input type="number" id="crud-price" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-indigo-500">
+                    <input type="number" id="crud-price" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-[#06C167]">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-500 block mb-1">Imagen del Producto</label>
-                    <div class="flex items-center gap-2 mt-1">
-                        <label class="flex-1 flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 border border-dashed rounded-xl p-3.5 cursor-pointer text-xs font-bold text-indigo-600 border-slate-300">
-                            <span id="file-upload-status"><i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Tomar Foto / Galería Celular</span>
-                            <input type="file" id="crud-file-input" accept="image/*" onchange="processLocalImageFile(this)" class="hidden">
-                        </label>
-                    </div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Fotografía del Artículo</label>
+                    <label class="flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 border border-dashed rounded-xl p-3 cursor-pointer text-xs font-bold text-[#06C167] border-slate-200 transition-all">
+                        <span id="file-upload-status"><i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Abrir Cámara / Galería</span>
+                        <input type="file" id="crud-file-input" accept="image/*" onchange="processLocalImageFile(this)" class="hidden">
+                    </label>
                     <input type="hidden" id="crud-img">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-500 block mb-1">Ingredientes Base (Separados por comas)</label>
-                    <input type="text" id="crud-ingredients" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-indigo-500" placeholder="Ej: Queso, Jamón, Cebolla, Piña">
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Ingredientes Base (Separar con comas)</label>
+                    <input type="text" id="crud-ingredients" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-[#06C167]" placeholder="Carne, Queso, Lechuga, Tomate">
                 </div>
             </div>
             <div class="flex gap-2 justify-end pt-2">
-                <button onclick="closeCrudModal()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl">Descartar</button>
-                <button onclick="saveCrudProduct()" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all">Almacenar</button>
+                <button onclick="closeCrudModal()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-50 rounded-xl cursor-pointer">Descartar</button>
+                <button onclick="saveCrudProduct()" class="px-5 py-2 text-xs font-black text-white bg-[#06C167] hover:bg-emerald-600 rounded-xl transition-all cursor-pointer">Guardar Producto</button>
             </div>
         </div>
     </div>
 
-    <div id="lightbox-modal" onclick="closeLightbox()" class="modal fixed inset-0 bg-black/90 z-50 justify-center items-center p-4 cursor-zoom-out">
-        <div class="relative max-w-md max-h-[80vh] flex flex-col justify-center items-center bg-transparent">
-            <img id="lightbox-img" src="" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl">
-            <p class="text-xs text-white/60 text-center font-medium mt-3">Haz clic en cualquier punto para cerrar</p>
-        </div>
+    <div id="lightbox-modal" onclick="closeLightbox()" class="modal fixed inset-0 bg-black/95 z-50 justify-center items-center p-4 cursor-zoom-out">
+        <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl transition-all">
     </div>
 
 
     <script>
-        // --- INSTANCIAS GLOBALES DE MAPA REAL ---
         let leafletMap = null;
         let mapMarker = null;
-        let selectedLat = 19.4326; // Coordenada base CDMX por defecto
+        let selectedLat = 19.4326; 
         let selectedLng = -99.1332;
 
-        // --- SISTEMA DE ALMACENAMIENTO E HISTORIAL DE INFORMACIÓN ---
+        // --- BANCO DE DATOS LOCALES ---
         let products = JSON.parse(localStorage.getItem('saas_products')) || [
-            { id: 1, name: "Pizza de Pepperoni Especial", price: 150, img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500", ingredients: ["Queso Mozzarella", "Pepperoni", "Salsa de Tomate", "Orégano"] },
-            { id: 2, name: "Hamburguesa Monster Doble", price: 190, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500", ingredients: ["Carne de Res", "Queso Cheddar", "Tocino", "Cebolla", "Pepinillos"] },
-            { id: 3, name: "Orden de Tacos Variados (5 pzs)", price: 95, img: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=500", ingredients: ["Tortilla de Maíz", "Carne Pastor", "Cebolla", "Cilantro", "Piña"] }
+            { id: 1, name: "Hamburguesa Bacon Suprema", price: 145, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500", ingredients: ["Carne de Res", "Queso Amarillo", "Tocino Crujiente", "Lechuga", "Mayonesa"] },
+            { id: 2, name: "Pizza Pepperoni Italiana", price: 165, img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500", ingredients: ["Masa Artesanal", "Salsa Tomate", "Queso Mozzarella", "Pepperoni"] },
+            { id: 3, name: "Tacos al Pastor Especial (5 pzs)", price: 90, img: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=500", ingredients: ["Tortilla de Maíz", "Carne al Pastor", "Cebolla", "Cilantro", "Piña"] }
         ];
 
         let orders = JSON.parse(localStorage.getItem('saas_orders')) || [];
         let currentShiftSales = JSON.parse(localStorage.getItem('saas_shift_sales')) || [];
         let archivedShifts = JSON.parse(localStorage.getItem('saas_archived_shifts')) || [];
-        
-        let bizSettings = JSON.parse(localStorage.getItem('saas_biz_settings')) || {
-            whatsappActive: true,
-            whatsappPhone: ""
-        };
+        let bizSettings = JSON.parse(localStorage.getItem('saas_biz_settings')) || { whatsappActive: true, whatsappPhone: "" };
 
-        // Memoria volátil de la sesión actual
         let cart = [];
         let activeProductForCustomization = null;
         let selectedDeliveryType = "delivery"; 
         let activeRoleMode = "client";
 
-        // --- DISPARADOR DE ARRANQUE ---
         window.onload = function() {
             document.getElementById("setting-whatsapp-active").checked = bizSettings.whatsappActive;
             document.getElementById("setting-whatsapp-phone").value = bizSettings.whatsappPhone || "";
@@ -300,7 +302,7 @@
             renderDeliveryOrders();
             calculateFinanceSummary();
             renderArchivedShifts();
-            initRealMap(); // Carga de mapa interactivo real
+            initRealMap();
             lucide.createIcons();
         };
 
@@ -311,117 +313,75 @@
             localStorage.setItem('saas_archived_shifts', JSON.stringify(archivedShifts));
         }
 
-        function saveBusinessSettings() {
-            bizSettings.whatsappActive = document.getElementById("setting-whatsapp-active").checked;
-            bizSettings.whatsappPhone = document.getElementById("setting-whatsapp-phone").value.trim();
-            localStorage.setItem('saas_biz_settings', JSON.stringify(bizSettings));
-        }
-
-        // --- CONVERSIÓN BINARIA LOCAL (TOMAR FOTOS / CARGAR ARCO GALERÍA CELULAR) ---
+        // --- CONVERTIDOR DE IMAGEN A TEXTO EN TIEMPO REAL ---
         function processLocalImageFile(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById("crud-img").value = e.target.result;
-                    document.getElementById("file-upload-status").innerHTML = `<i data-lucide="check" class="text-green-500 w-4 h-4 inline mr-1"></i>¡Foto Cargada Correctamente!`;
+                    document.getElementById("file-upload-status").innerHTML = `<i data-lucide="check" class="text-[#06C167] w-4 h-4 inline mr-1"></i>¡Imagen en memoria!`;
                     lucide.createIcons();
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // --- ARQUITECTURA DE MAPAS (LEAFLET + GPS + OPENSTREETMAP) ---
+        // --- CONEXIÓN CARTOGRÁFICA LEAFLET ---
         function initRealMap() {
             leafletMap = L.map('real-map').setView([selectedLat, selectedLng], 13);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(leafletMap);
-
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(leafletMap);
             mapMarker = L.marker([selectedLat, selectedLng], { draggable: true }).addTo(leafletMap);
             
             mapMarker.on('dragend', function (e) {
-                let pos = mapMarker.getLatLng();
-                selectedLat = pos.lat;
-                selectedLng = pos.lng;
-                updateCoordsText(selectedLat, selectedLng);
+                let pos = mapMarker.getLatLng(); selectedLat = pos.lat; selectedLng = pos.lng; updateCoordsText(selectedLat, selectedLng);
             });
-
             leafletMap.on('click', function(e) {
-                mapMarker.setLatLng(e.latlng);
-                selectedLat = e.latlng.lat;
-                selectedLng = e.latlng.lng;
-                updateCoordsText(selectedLat, selectedLng);
+                mapMarker.setLatLng(e.latlng); selectedLat = e.latlng.lat; selectedLng = e.latlng.lng; updateCoordsText(selectedLat, selectedLng);
             });
-
             updateCoordsText(selectedLat, selectedLng);
         }
-
-        function updateCoordsText(lat, lng) {
-            document.getElementById("coordinates-display").innerText = `Lat: ${lat.toFixed(5)} | Lng: ${lng.toFixed(5)}`;
-        }
-
+        function updateCoordsText(lat, lng) { document.getElementById("coordinates-display").innerText = `Lat: ${lat.toFixed(5)} | Lng: ${lng.toFixed(5)}`; }
+        
         function locateUserGPS() {
-            if (!navigator.geolocation) return alert("El navegador no cuenta con soporte GPS.");
             navigator.geolocation.getCurrentPosition(position => {
-                selectedLat = position.coords.latitude;
-                selectedLng = position.coords.longitude;
-                leafletMap.setView([selectedLat, selectedLng], 16);
-                mapMarker.setLatLng([selectedLat, selectedLng]);
-                updateCoordsText(selectedLat, selectedLng);
-            }, () => {
-                alert("Permiso denegado o señal GPS inestable.");
-            });
+                selectedLat = position.coords.latitude; selectedLng = position.coords.longitude;
+                leafletMap.setView([selectedLat, selectedLng], 16); mapMarker.setLatLng([selectedLat, selectedLng]); updateCoordsText(selectedLat, selectedLng);
+            }, () => alert("GPS inestable o sin accesos."));
         }
 
         function searchAddressOnMap() {
-            let q = document.getElementById("client-address").value;
-            if (!q.trim()) return alert("Por favor escribe una calle o colonia.");
-            
+            let q = document.getElementById("client-address").value; if (!q.trim()) return;
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`)
                 .then(r => r.json()).then(data => {
                     if (data && data.length > 0) {
-                        selectedLat = parseFloat(data[0].lat);
-                        selectedLng = parseFloat(data[0].lon);
-                        leafletMap.setView([selectedLat, selectedLng], 16);
-                        mapMarker.setLatLng([selectedLat, selectedLng]);
-                        updateCoordsText(selectedLat, selectedLng);
-                    } else {
-                        alert("No se localizó esa dirección en el mapa de cobertura.");
+                        selectedLat = parseFloat(data[0].lat); selectedLng = parseFloat(data[0].lon);
+                        leafletMap.setView([selectedLat, selectedLng], 16); mapMarker.setLatLng([selectedLat, selectedLng]); updateCoordsText(selectedLat, selectedLng);
                     }
-                }).catch(() => alert("Error en el servidor de mapas."));
+                });
         }
 
         function setDeliveryType(mode) {
             selectedDeliveryType = mode;
-            const mapSection = document.getElementById("wrapper-map-section");
-            
-            document.getElementById("type-deliv").className = mode === "delivery" ? "w-1/2 py-2.5 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-xs flex justify-center items-center gap-2" : "w-1/2 py-2.5 text-sm font-bold rounded-lg text-slate-600 flex justify-center items-center gap-2";
-            document.getElementById("type-pickup").className = mode === "pickup" ? "w-1/2 py-2.5 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-xs flex justify-center items-center gap-2" : "w-1/2 py-2.5 text-sm font-bold rounded-lg text-slate-600 flex justify-center items-center gap-2";
-            
-            if (mode === "delivery") {
-                mapSection.className = "space-y-2";
-                setTimeout(() => { if(leafletMap) leafletMap.invalidateSize(); }, 210);
-            } else {
-                mapSection.className = "space-y-2 hidden";
-            }
+            document.getElementById("type-deliv").className = mode === "delivery" ? "w-1/2 py-3 text-xs font-black rounded-xl bg-white text-slate-900 shadow-xs flex justify-center items-center gap-2" : "w-1/2 py-3 text-xs font-black rounded-xl text-slate-500 flex justify-center items-center gap-2";
+            document.getElementById("type-pickup").className = mode === "pickup" ? "w-1/2 py-3 text-xs font-black rounded-xl bg-white text-slate-900 shadow-xs flex justify-center items-center gap-2" : "w-1/2 py-3 text-xs font-black rounded-xl text-slate-500 flex justify-center items-center gap-2";
+            document.getElementById("wrapper-map-section").className = mode === "delivery" ? "space-y-3" : "space-y-3 hidden";
+            setTimeout(() => { if(leafletMap) leafletMap.invalidateSize(); }, 210);
         }
 
-        // --- FLUJO MÓDULO CLIENTE (AÑADIR Y PROCESAR) ---
+        // --- CÁTALOGO RESPONSIVO CLIENTE ---
         function renderClientMenu() {
-            const box = document.getElementById("client-menu-box");
-            box.innerHTML = "";
+            const box = document.getElementById("client-menu-box"); box.innerHTML = "";
             products.forEach(p => {
                 box.innerHTML += `
-                    <div class="bg-white p-3 rounded-2xl shadow-xs border border-slate-100 flex gap-4 items-center">
-                        <img onclick="triggerLightbox('${p.img}')" src="${p.img}" class="w-20 h-20 object-cover rounded-xl bg-slate-100 cursor-zoom-in border border-slate-100 transition-all hover:scale-105">
+                    <div class="bg-white p-3.5 rounded-2xl border border-slate-100 flex gap-4 items-center shadow-2xs hover:shadow-xs transition-all">
+                        <img onclick="triggerLightbox('${p.img}')" src="${p.img}" class="w-20 h-20 object-cover rounded-xl bg-slate-50 cursor-zoom-in border border-slate-100/60">
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-slate-900 text-sm truncate">${p.name}</h3>
-                            <p class="text-xs text-slate-400 mt-0.5 truncate">${p.ingredients ? p.ingredients.join(', ') : ''}</p>
-                            <p class="text-indigo-600 font-black text-base mt-1">$${p.price.toFixed(2)}</p>
+                            <h3 class="font-black text-slate-900 text-sm tracking-tight truncate">${p.name}</h3>
+                            <p class="text-[11px] text-slate-400 font-medium mt-0.5 truncate">${p.ingredients ? p.ingredients.join(', ') : ''}</p>
+                            <p class="text-[#06C167] font-black text-base mt-1">$${p.price.toFixed(2)}</p>
                         </div>
-                        <button onclick="launchCustomModal(${p.id})" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 p-2.5 rounded-xl transition-all">
-                            <i data-lucide="plus" class="w-5 h-5"></i>
+                        <button onclick="launchCustomModal(${p.id})" class="bg-slate-50 hover:bg-[#06C167] hover:text-white text-slate-700 p-2.5 rounded-xl transition-all border cursor-pointer border-slate-200/50">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
                         </button>
                     </div>`;
             });
@@ -429,66 +389,48 @@
         }
 
         function launchCustomModal(productId) {
-            const prod = products.find(p => p.id === productId);
-            if (!prod) return;
+            const prod = products.find(p => p.id === productId); if (!prod) return;
             activeProductForCustomization = prod;
-            
             document.getElementById("cust-modal-title").innerText = prod.name;
             document.getElementById("cust-modal-price").innerText = `$${prod.price.toFixed(2)}`;
             document.getElementById("cust-modal-notes").value = "";
-            
-            const box = document.getElementById("ingredients-checkboxes-box");
-            box.innerHTML = "";
-            
-            if (prod.ingredients && prod.ingredients.length > 0) {
+            const box = document.getElementById("ingredients-checkboxes-box"); box.innerHTML = "";
+            if (prod.ingredients) {
                 prod.ingredients.forEach(ing => {
                     box.innerHTML += `
-                        <label class="flex items-center gap-2.5 bg-slate-50 px-3 py-2 rounded-xl text-xs font-semibold select-none cursor-pointer border border-slate-100">
-                            <input type="checkbox" checked value="${ing}" class="w-4 h-4 rounded text-indigo-600 border-slate-300">
-                            <span>${ing}</span>
+                        <label class="flex items-center justify-between bg-slate-50 px-3.5 py-2.5 rounded-xl text-xs font-bold border border-slate-150 cursor-pointer select-none">
+                            <span class="text-slate-800">${ing}</span>
+                            <input type="checkbox" checked value="${ing}" class="w-4 h-4 rounded text-[#06C167] focus:ring-[#06C167]">
                         </label>`;
                 });
-            } else {
-                box.innerHTML = `<p class="text-xs text-slate-400">Este artículo no posee modificadores base.</p>`;
             }
             document.getElementById("custom-order-modal").classList.add("active");
         }
-
-        function closeCustomModal() {
-            document.getElementById("custom-order-modal").classList.remove("active");
-            activeProductForCustomization = null;
-        }
+        function closeCustomModal() { document.getElementById("custom-order-modal").classList.remove("active"); }
 
         function commitToCart() {
             const inputs = document.getElementById("ingredients-checkboxes-box").querySelectorAll("input[type='checkbox']");
             let excluded = [];
             inputs.forEach(i => { if(!i.checked) excluded.push(i.value); });
-            
-            cart.push({
-                product: activeProductForCustomization,
-                excluded: excluded,
-                notes: document.getElementById("cust-modal-notes").value.trim()
-            });
-            
+            cart.push({ product: activeProductForCustomization, excluded: excluded, notes: document.getElementById("cust-modal-notes").value.trim() });
             document.getElementById("cart-total").innerText = `$${cart.reduce((acc, e) => acc + e.product.price, 0).toFixed(2)}`;
             closeCustomModal();
         }
 
         function submitClientOrder() {
-            if (cart.length === 0) return alert("🛒 El carrito se encuentra vacío.");
+            if (cart.length === 0) return alert("🛒 Agrega productos a tu bolsa.");
             let name = document.getElementById("client-name").value.trim();
             let phone = document.getElementById("client-phone").value.trim();
             let address = document.getElementById("client-address").value.trim();
-            
-            if (!name || !phone) return alert("👤 Los campos de nombre y celular son requeridos.");
-            if (selectedDeliveryType === "delivery" && !address) return alert("📍 Para envíos a domicilio escriba su calle.");
+            if (!name || !phone) return alert("👤 Por favor completa tu nombre y número.");
+            if (selectedDeliveryType === "delivery" && !address) return alert("📍 Indica la calle de entrega.");
 
             let orderData = {
                 id: Date.now().toString().slice(-4),
                 customerName: name,
                 customerPhone: phone,
                 deliveryMode: selectedDeliveryType,
-                addressDetails: selectedDeliveryType === "delivery" ? address : "Recoge en Tienda",
+                addressDetails: selectedDeliveryType === "delivery" ? address : "Recoge en local de la Tienda",
                 coords: selectedDeliveryType === "delivery" ? `${selectedLat.toFixed(5)},${selectedLng.toFixed(5)}` : null,
                 items: [...cart],
                 totalAmount: cart.reduce((acc, entry) => acc + entry.product.price, 0),
@@ -497,124 +439,124 @@
 
             orders.push(orderData);
             persistDatabase();
-            alert("🚀 ¡Tu orden ha sido guardada de forma interna en el sistema!");
+            alert("🚀 ¡Pedido enviado con éxito!");
 
-            // Enlace de reenvío por canal WhatsApp si está configurado en Ajustes
             if(bizSettings.whatsappActive && bizSettings.whatsappPhone) {
-                let msg = `*NUEVO PEDIDO CON FOLIO %23${orderData.id}*%0A*Cliente:* ${orderData.customerName}%0A*Cel:* ${orderData.customerPhone}%0A*Modalidad:* ${selectedDeliveryType === 'delivery' ? 'Domicilio' : 'Recoger'}%0A%0A*Detalles:*%0A`;
+                let msg = `*NUEVO PEDIDO %23${orderData.id}*%0A*Cliente:* ${orderData.customerName}%0A%0A*Artículos:*%0A`;
                 orderData.items.forEach(i => {
                     msg += `• ${i.product.name}%0A`;
-                    if(i.excluded.length > 0) msg += `  _Quitar:_ ${i.excluded.join(', ')}%0A`;
+                    if(i.excluded.length > 0) msg += `  _Sin:_ ${i.excluded.join(', ')}%0A`;
                     if(i.notes) msg += `  _Nota:_ "${i.notes}"%0A`;
                 });
-                msg += `%0A*Monto total:* $${orderData.totalAmount.toFixed(2)}`;
-                if(orderData.coords) msg += `%0A*Ruta GPS:* https://maps.google.com/?q=${orderData.coords}`;
+                msg += `%0A*Total:* $${orderData.totalAmount.toFixed(2)}`;
+                if(orderData.coords) msg += `%0A*Ruta:* https://maps.google.com/?q=${orderData.coords}`;
                 window.open(`https://wa.me/${bizSettings.whatsappPhone}?text=${msg}`, '_blank');
             }
 
-            // Reset de campos
-            cart = []; 
-            document.getElementById("client-name").value = ""; 
-            document.getElementById("client-phone").value = ""; 
-            document.getElementById("client-address").value = ""; 
-            document.getElementById("cart-total").innerText = "$0.00";
-            
-            renderClientMenu(); 
-            renderAdminOrders(); 
-            renderDeliveryOrders();
+            cart = []; document.getElementById("client-name").value = ""; document.getElementById("client-phone").value = ""; document.getElementById("client-address").value = ""; document.getElementById("cart-total").innerText = "$0.00";
+            renderClientMenu(); renderAdminOrders(); renderDeliveryOrders();
         }
 
-        // --- SISTEMA INTERNO DE DESGLOSE DE PRODUCTOS REEL ---
+        // --- SISTEMA DESGLOSE LISTA ---
         function buildOrderItemsHTML(items) {
             let html = "";
             items.forEach(i => {
-                html += `<li class="border-b border-slate-100 last:border-0 pb-1.5 pt-1.5">`;
-                html += `<p class="font-bold text-slate-800 text-xs">✔ ${i.product.name}</p>`;
+                html += `<li class="border-b border-slate-100 last:border-0 pb-2 pt-2">`;
+                html += `<p class="font-black text-slate-800 text-xs">${i.product.name}</p>`;
                 if(i.excluded && i.excluded.length > 0) {
-                    html += `<p class="text-[10px] text-red-500 font-extrabold pl-3">❌ Quitar: ${i.excluded.join(', ')}</p>`;
+                    html += `<p class="text-[10px] text-red-500 font-bold pl-2 mt-0.5">❌ Quitar: ${i.excluded.join(', ')}</p>`;
                 }
                 if(i.notes) {
-                    html += `<p class="text-[10px] text-indigo-600 bg-indigo-50/50 px-2 py-0.5 rounded-md mt-1 ml-3 border border-indigo-100/30 font-medium italic">📝 Nota especial: "${i.notes}"</p>`;
+                    html += `<p class="text-[10px] text-slate-500 font-semibold italic bg-slate-100 px-2 py-1 rounded-lg mt-1 border border-slate-200/50">Nota: "${i.notes}"</p>`;
                 }
                 html += `</li>`;
             });
             return html;
         }
 
-        // --- CONTROL ADMINISTRATIVO (ÓRDENES EN CADENA) ---
+        // --- PANEL ADMIN (ARQUITECTURA DE FLUJO FLEXIBLE Y TOTAL) ---
         function renderAdminOrders() {
-            const container = document.getElementById("admin-orders-container");
-            container.innerHTML = "";
-            
-            if(orders.length === 0) {
-                container.innerHTML = "<div class='text-center py-8 text-slate-400 text-sm font-medium'><i data-lucide='inbox' class='w-8 h-8 mx-auto opacity-30 mb-1.5'></i>No existen comandas activas.</div>";
-                return;
-            }
+            const container = document.getElementById("admin-orders-container"); container.innerHTML = "";
+            if(orders.length === 0) { container.innerHTML = "<div class='text-center py-10 bg-white rounded-3xl border border-slate-100 font-bold text-slate-400 text-xs uppercase tracking-wider'>Bandeja limpia. No hay órdenes activas.</div>"; return; }
             
             orders.forEach(o => {
-                let btn = "";
+                let actionArea = "";
+                
+                // CONDICIONAL COMPLETO DE ACCIONES SEGÚN ESTATUS
                 if(o.status === "Pendiente") {
-                    btn = `<button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition-all shadow-xs">Mandar a Cocina</button>`;
+                    actionArea = `<button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-indigo-600 text-white text-xs px-4 py-2 rounded-xl font-black shadow-xs hover:bg-indigo-700 transition-all cursor-pointer">Preparar en Cocina</button>`;
                 } else if(o.status === "Preparando") {
-                    btn = `<button onclick="updateOrderStatus('${o.id}', 'En Camino')" class="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition-all shadow-xs">Enviar a Repartidor (Despachar)</button>`;
+                    actionArea = `
+                        <div class="flex gap-2">
+                            <button onclick="pushStatusWhatsApp('${o.id}', '10 minutos')" class="border border-slate-200 text-slate-700 bg-slate-50 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 hover:bg-slate-100 transition-all cursor-pointer"><i data-lucide="message-square" class="w-3.5 h-3.5 text-[#06C167]"></i> Alerta 10m</button>
+                            <button onclick="updateOrderStatus('${o.id}', 'En Camino')" class="bg-[#06C167] text-white text-xs px-4 py-2 rounded-xl font-black shadow-xs hover:bg-emerald-600 transition-all cursor-pointer">Mandar con Repartidor</button>
+                        </div>`;
                 } else if(o.status === "En Camino") {
-                    btn = `<span class="text-xs text-amber-600 font-bold italic flex items-center gap-0.5"><i data-lucide="truck" class="w-4 h-4"></i> En ruta con repartidor...</span>`;
+                    // AQUÍ ESTÁ EL AJUSTE PEDIDO: El Admin puede revertir o cancelar la ruta si algo sale mal
+                    actionArea = `
+                        <div class="flex flex-col sm:flex-row gap-2 items-end sm:items-center">
+                            <span class="text-xs text-amber-500 font-black italic flex items-center gap-1"><i data-lucide="truck" class="w-4 h-4 animate-bounce"></i> En Ruta...</span>
+                            <div class="flex gap-1.5">
+                                <button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-1 rounded-lg transition-all cursor-pointer">Regresar a Cocina</button>
+                                <button onclick="cancelOrderDefinitively('${o.id}')" class="bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 text-[10px] font-bold px-2 py-1 rounded-lg transition-all cursor-pointer">Cancelar Orden</button>
+                            </div>
+                        </div>`;
                 }
 
                 container.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 space-y-3 shadow-xs">
-                        <div class="flex justify-between font-bold text-sm">
-                            <span class="font-black text-slate-900">Orden #${o.id} - ${o.customerName}</span>
-                            <span class="text-xs px-2.5 py-0.5 bg-slate-100 rounded-full text-slate-700 border border-slate-200">${o.status}</span>
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-2xs space-y-3.5">
+                        <div class="flex justify-between items-center border-b border-slate-50 pb-2.5">
+                            <div>
+                                <span class="font-black text-slate-900 text-sm">Orden #${o.id}</span>
+                                <span class="ml-2 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${o.deliveryMode === 'delivery' ? 'bg-purple-50 text-purple-700 border border-purple-100':'bg-amber-50 text-amber-700 border border-amber-100'}">${o.deliveryMode==='delivery'?'Delivery':'Pickup'}</span>
+                            </div>
+                            <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-lg border bg-slate-50 text-slate-600">${o.status}</span>
                         </div>
-                        <div class="bg-slate-50 p-3 rounded-xl space-y-2">
-                            <p class="text-xs text-slate-500"><strong>Contacto:</strong> ${o.customerPhone} | <strong>Tipo:</strong> ${o.deliveryMode}</p>
-                            <p class="text-xs text-slate-500"><strong>Destino / Dirección:</strong> ${o.addressDetails}</p>
-                            <div class="border-t border-slate-200 pt-2">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Productos y Detalles Cocina:</p>
-                                <ul class="space-y-0.5">${buildOrderItemsHTML(o.items)}</ul>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-100 text-xs">
+                            <div class="space-y-1">
+                                <p class="text-slate-400 font-medium">DATOS DE ENTREGA</p>
+                                <p class="text-slate-900 font-bold"><span class="text-slate-500">Cliente:</span> ${o.customerName} (${o.customerPhone})</p>
+                                <p class="text-slate-800 font-medium"><span class="text-slate-500">Dirección:</span> ${o.addressDetails}</p>
+                            </div>
+                            <div class="border-t md:border-t-0 md:border-l border-slate-200/80 pt-2.5 md:pt-0 md:pl-3.5">
+                                <p class="text-slate-400 font-black tracking-wider text-[10px] mb-1">COMANDA COCINA:</p>
+                                <ul class="divide-y divide-slate-100/40">${buildOrderItemsHTML(o.items)}</ul>
                             </div>
                         </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-50">
                             <span class="text-base font-black text-slate-900">$${o.totalAmount.toFixed(2)}</span>
-                            <div>${btn}</div>
+                            <div>${actionArea}</div>
                         </div>
                     </div>`;
             });
             lucide.createIcons();
         }
 
-        // --- INTERFAZ EXCLUSIVA ROL REPARTIDOR ---
+        // --- PORTAL EXCLUSIVO REPARTIDORES ---
         function renderDeliveryOrders() {
-            const container = document.getElementById("delivery-orders-container");
-            container.innerHTML = "";
-            
-            // El repartidor mapea de manera exclusiva los despachados ("En Camino")
+            const container = document.getElementById("delivery-orders-container"); container.innerHTML = "";
             let deliveryList = orders.filter(o => o.status === 'En Camino' && o.deliveryMode === 'delivery');
             
-            if(deliveryList.length === 0) {
-                container.innerHTML = "<p class='text-xs text-center py-6 text-slate-400 font-medium'>No tienes asignadas rutas en tránsito en este momento.</p>";
-                return;
-            }
+            if(deliveryList.length === 0) { container.innerHTML = "<div class='text-center py-10 bg-white rounded-2xl border border-slate-100 font-bold text-slate-400 text-xs'>SIN RUTAS ASIGNADAS EN ESTE MOMENTO.</div>"; return; }
             
             deliveryList.forEach(o => {
                 container.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                            <span class="text-sm font-black text-slate-900">Pedido #${o.id}</span>
-                            <span class="text-xs font-bold text-indigo-600">${o.customerName}</span>
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-50">
+                            <span class="text-xs font-black text-slate-400 uppercase">Orden #${o.id}</span>
+                            <span class="text-sm font-black text-slate-900">${o.customerName}</span>
                         </div>
-                        <div class="text-xs bg-slate-50 p-3 rounded-xl space-y-2 text-slate-600">
-                            <p><strong>Número Cliente:</strong> ${o.customerPhone}</p>
-                            <p><strong>Dirección Entrega:</strong> ${o.addressDetails}</p>
-                            <div class="border-t border-slate-200 pt-2">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Productos contenidos:</p>
-                                <ul class="space-y-0.5">${buildOrderItemsHTML(o.items)}</ul>
+                        <div class="text-xs bg-slate-50 p-3 rounded-2xl space-y-2 border">
+                            <p class="text-slate-700"><strong>Teléfono:</strong> ${o.customerPhone}</p>
+                            <p class="text-slate-700"><strong>Lugar:</strong> ${o.addressDetails}</p>
+                            <div class="border-t pt-2 mt-2">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">Carga del Pedido:</p>
+                                <ul class="space-y-0.5 divide-y divide-slate-100/40">${buildOrderItemsHTML(o.items)}</ul>
                             </div>
                         </div>
-                        <div class="flex gap-2 pt-1">
-                            <button onclick="window.open('https://maps.google.com/?q=${o.coords}', '_blank')" class="w-1/2 bg-indigo-600 text-white text-xs py-2.5 rounded-xl font-bold flex justify-center items-center gap-1 hover:bg-indigo-700 transition-all"><i data-lucide="map" class="w-4 h-4"></i> Lanzar GPS</button>
-                            <button onclick="finalizeOrderFromRole('${o.id}')" class="w-1/2 bg-emerald-600 text-white text-xs py-2.5 rounded-xl font-bold flex justify-center items-center gap-1 hover:bg-emerald-700 transition-all"><i data-lucide="check" class="w-4 h-4"></i> Entregado</button>
+                        <div class="flex gap-2">
+                            <button onclick="window.open('https://maps.google.com/?q=${o.coords}', '_blank')" class="w-1/2 bg-slate-900 text-white text-xs py-3 rounded-xl font-black flex justify-center items-center gap-1 hover:bg-black transition-all cursor-pointer"><i data-lucide="map" class="w-4 h-4 text-[#06C167]"></i> Lanzar GPS</button>
+                            <button onclick="finalizeOrderFromRole('${o.id}')" class="w-1/2 bg-[#06C167] text-white text-xs py-3 rounded-xl font-black flex justify-center items-center gap-1 hover:bg-emerald-600 transition-all shadow-sm cursor-pointer"><i data-lucide="check" class="w-4 h-4"></i> Entregado</button>
                         </div>
                     </div>`;
             });
@@ -622,88 +564,79 @@
         }
 
         function updateOrderStatus(id, nextStatus) {
-            let o = orders.find(ord => ord.id == id);
-            if(o) o.status = nextStatus;
-            persistDatabase();
-            renderAdminOrders();
-            renderDeliveryOrders();
+            let o = orders.find(ord => ord.id == id); if(o) o.status = nextStatus;
+            persistDatabase(); renderAdminOrders(); renderDeliveryOrders();
         }
 
-        // CADENA COMPLETA: Remoción definitiva y salto a historial financiero (Corte Caja)
-        function finalizeOrderFromRole(id) {
-            let idx = orders.findIndex(ord => ord.id == id);
-            if (idx !== -1) {
-                let resolved = orders.splice(idx, 1)[0];
-                resolved.status = "Cerrado y Entregado";
-                currentShiftSales.push(resolved);
-                
-                persistDatabase();
-                renderAdminOrders();
-                renderDeliveryOrders();
-                calculateFinanceSummary();
+        function cancelOrderDefinitively(id) {
+            if(confirm("¿Seguro que deseas cancelar de forma definitiva esta orden? Se removerá del panel.")) {
+                orders = orders.filter(ord => ord.id != id);
+                persistDatabase(); renderAdminOrders(); renderDeliveryOrders();
             }
         }
 
-        // --- ARCO DE CORTE E HISTORIAL PERMANENTE ---
+        function pushStatusWhatsApp(id, time) {
+            let o = orders.find(ord => ord.id == id); if (!o) return;
+            let txt = `¡Hola *${o.customerName}*! Tu orden *#${o.id}* está lista y va en camino a tu dirección en un tiempo estimado de *${time}*. 🛵🔥`;
+            window.open(`https://wa.me/${o.customerPhone}?text=${encodeURIComponent(txt)}`, '_blank');
+        }
+
+        function finalizeOrderFromRole(id) {
+            let idx = orders.findIndex(ord => ord.id == id);
+            if (idx !== -1) {
+                let res = orders.splice(idx, 1)[0]; res.status = "Cerrado y Cobrado";
+                currentShiftSales.push(res);
+                persistDatabase(); renderAdminOrders(); renderDeliveryOrders(); calculateFinanceSummary();
+            }
+        }
+
+        // --- CONTROLES FINANCIEROS Y CORTES DE CAJA ---
         function calculateFinanceSummary() {
             let total = currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0);
             document.getElementById("live-sales-amount").innerText = `$${total.toFixed(2)}`;
-            document.getElementById("live-sales-count").innerText = `${currentShiftSales.length} órdenes liquidadas en la sesión actual`;
+            document.getElementById("live-sales-count").innerText = `${currentShiftSales.length} órdenes completadas en la sesión diaria`;
         }
 
         function closeCurrentShift() {
-            if(currentShiftSales.length === 0) return alert("No se registran transacciones para archivar.");
-            if (confirm("¿Seguro que deseas realizar el corte de caja, archivar el día y cerrar el turno de ventas actuales?")) {
+            if(currentShiftSales.length === 0) return alert("No hay transacciones registradas.");
+            if (confirm("¿Confirmas cerrar caja y archivar el día de hoy de manera fija?")) {
                 let sum = currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0);
-                
-                archivedShifts.unshift({
-                    date: new Date().toLocaleString(),
-                    ordersCount: currentShiftSales.length,
-                    revenue: sum
-                });
-                
-                currentShiftSales = []; // Reseteo de turno activo
-                persistDatabase();
-                calculateFinanceSummary();
-                renderArchivedShifts();
-                alert("🔒 Turno archivado y guardado de manera definitiva en el Historial.");
+                archivedShifts.unshift({ date: new Date().toLocaleString(), ordersCount: currentShiftSales.length, revenue: sum });
+                currentShiftSales = []; 
+                persistDatabase(); calculateFinanceSummary(); renderArchivedShifts();
+                alert("🔒 Corte guardado con éxito.");
             }
         }
 
         function renderArchivedShifts() {
-            const container = document.getElementById("archived-shifts-box");
-            container.innerHTML = "";
-            if(archivedShifts.length === 0) {
-                container.innerHTML = "<p class='text-xs font-medium text-slate-400 italic text-center py-3'>No hay cortes anteriores archivados en la memoria.</p>";
-                return;
-            }
+            const container = document.getElementById("archived-shifts-box"); container.innerHTML = "";
+            if(archivedShifts.length === 0) { container.innerHTML = "<p class='text-xs font-bold text-slate-400 italic text-center py-4'>No se registran bitácoras previas.</p>"; return; }
             archivedShifts.forEach(s => {
                 container.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 flex justify-between text-xs font-bold shadow-2xs">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center shadow-2xs">
                         <div>
-                            <span>Corte: ${s.date}</span>
-                            <p class="text-[10px] text-slate-400 font-normal mt-0.5">${s.ordersCount} órdenes consolidadas</p>
+                            <span class="text-xs font-black text-slate-800 block">${s.date}</span>
+                            <p class="text-[10px] text-slate-400 font-medium mt-0.5">${s.ordersCount} comandas consolidadas</p>
                         </div>
-                        <span class="bg-slate-50 px-3 py-1.5 border rounded-lg text-slate-900">$${s.revenue.toFixed(2)}</span>
+                        <span class="bg-slate-50 border px-3 py-1.5 rounded-xl font-black text-slate-900">$${s.revenue.toFixed(2)}</span>
                     </div>`;
             });
         }
 
-        // --- CRUD COMPLETO INVENTARIO ---
+        // --- CRUD DE PRODUCTOS COMPLETO ---
         function renderAdminProducts() {
-            const grid = document.getElementById("admin-products-grid");
-            grid.innerHTML = "";
+            const grid = document.getElementById("admin-products-grid"); grid.innerHTML = "";
             products.forEach(p => {
                 grid.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 flex gap-3 items-center text-xs font-bold shadow-2xs">
-                        <img src="${p.img}" class="w-12 h-12 object-cover rounded-lg border">
+                    <div class="bg-white p-3 rounded-2xl border border-slate-100 flex gap-3 items-center shadow-2xs text-xs font-bold">
+                        <img src="${p.img}" class="w-12 h-12 object-cover rounded-xl border">
                         <div class="flex-1 min-w-0">
                             <span class="block text-slate-900 truncate">${p.name}</span>
                             <span class="block text-[11px] text-slate-400 font-normal truncate">${p.ingredients ? p.ingredients.join(', '):''}</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-indigo-600 font-extrabold">$${p.price}</span>
-                            <button onclick="deleteProductInventory(${p.id})" class="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            <span class="text-[#06C167] font-black">$${p.price}</span>
+                            <button onclick="deleteProductInventory(${p.id})" class="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition-all cursor-pointer"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                         </div>
                     </div>`;
             });
@@ -711,14 +644,9 @@
         }
 
         function triggerProductModal() {
-            document.getElementById("file-upload-status").innerHTML = `<i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Tomar Foto / Galería Celular`;
-            document.getElementById("crud-id").value = "";
-            document.getElementById("crud-name").value = "";
-            document.getElementById("crud-price").value = "";
-            document.getElementById("crud-img").value = "";
-            document.getElementById("crud-ingredients").value = "";
-            document.getElementById("product-crud-modal").classList.add("active");
-            lucide.createIcons();
+            document.getElementById("file-upload-status").innerHTML = `<i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Abrir Cámara / Galería`;
+            document.getElementById("crud-id").value = ""; document.getElementById("crud-name").value = ""; document.getElementById("crud-price").value = ""; document.getElementById("crud-img").value = ""; document.getElementById("crud-ingredients").value = "";
+            document.getElementById("product-crud-modal").classList.add("active"); lucide.createIcons();
         }
         function closeCrudModal() { document.getElementById("product-crud-modal").classList.remove("active"); }
 
@@ -728,76 +656,44 @@
             let imgData = document.getElementById("crud-img").value || "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500";
             let rawIng = document.getElementById("crud-ingredients").value;
             
-            if(!name || isNaN(price)) return alert("Nombre y precio válidos son campos obligatorios.");
+            if(!name || isNaN(price)) return alert("Nombre y precio requeridos.");
             let ingArr = rawIng ? rawIng.split(',').map(i => i.trim()).filter(i => i !== "") : [];
 
-            products.push({
-                id: Date.now(),
-                name: name,
-                price: price,
-                img: imgData,
-                ingredients: ingArr
-            });
-
-            persistDatabase();
-            closeCrudModal();
-            renderClientMenu();
-            renderAdminProducts();
+            products.push({ id: Date.now(), name: name, price: price, img: imgData, ingredients: ingArr });
+            persistDatabase(); closeCrudModal(); renderClientMenu(); renderAdminProducts();
         }
 
         function deleteProductInventory(id) {
-            if(confirm("¿Remover de forma permanente este producto del menú?")) {
-                products = products.filter(p => p.id !== id);
-                persistDatabase();
-                renderClientMenu();
-                renderAdminProducts();
-            }
+            if(confirm("¿Eliminar producto?")) { products = products.filter(p => p.id !== id); persistDatabase(); renderClientMenu(); renderAdminProducts(); }
         }
 
-        // --- UTILERÍAS COMPONENTES LIGHTBOX ---
-        function triggerLightbox(imageSrc) { document.getElementById("lightbox-img").src = imageSrc; document.getElementById("lightbox-modal").classList.add("active"); }
+        function triggerLightbox(src) { document.getElementById("lightbox-img").src = src; document.getElementById("lightbox-modal").classList.add("active"); }
         function closeLightbox() { document.getElementById("lightbox-modal").classList.remove("active"); }
 
-        // --- SISTEMA DE LOGEO DE ACCESO ---
-        function accessRole(role, expectedPassword) {
-            let pass = prompt(`Ingrese clave de verificación de seguridad comercial:`);
-            if (pass === expectedPassword) {
+        // --- SISTEMA DE LOGEO MULTIROL ---
+        function accessRole(role, passKey) {
+            let p = prompt(`Contraseña de acceso seguro:`);
+            if (p === passKey) {
                 activeRoleMode = role;
-                document.getElementById("view-client").classList.add("hidden");
-                document.getElementById("cart-bar").classList.add("hidden");
-                document.getElementById("view-admin").classList.add("hidden");
-                document.getElementById("view-delivery").classList.add("hidden");
-                
+                document.getElementById("view-client").classList.add("hidden"); document.getElementById("cart-bar").classList.add("hidden"); document.getElementById("view-admin").classList.add("hidden"); document.getElementById("view-delivery").classList.add("hidden");
                 document.getElementById("role-banner").classList.remove("hidden");
-                document.getElementById("role-banner-text").innerText = role === 'admin_user' ? "Panel de Control de Administración" : "Módulo de Operaciones para Repartidores";
-                
+                document.getElementById("role-banner-text").innerText = role === 'admin_user' ? "Panel Administrativo General" : "Módulo Operativo de Repartidores";
                 document.getElementById(role === 'admin_user' ? "view-admin" : "view-delivery").classList.remove("hidden");
-                if(role === 'admin_user') toggleAdminTabs('orders');
-                else renderDeliveryOrders();
-            } else if (pass !== null) alert("❌ Clave inválida.");
+                if(role === 'admin_user') toggleAdminTabs('orders'); else renderDeliveryOrders();
+            } else if (p !== null) alert("❌ Acceso denegado.");
             lucide.createIcons();
         }
 
         function exitRoles() {
             activeRoleMode = "client";
-            document.getElementById("role-banner").classList.add("hidden");
-            document.getElementById("view-admin").classList.add("hidden");
-            document.getElementById("view-delivery").classList.add("hidden");
-            
-            document.getElementById("view-client").classList.remove("hidden");
-            document.getElementById("cart-bar").classList.remove("hidden");
-            setTimeout(() => { if(leafletMap) leafletMap.invalidateSize(); }, 200);
-            lucide.createIcons();
+            document.getElementById("role-banner").classList.add("hidden"); document.getElementById("view-admin").classList.add("hidden"); document.getElementById("view-delivery").classList.add("hidden");
+            document.getElementById("view-client").classList.remove("hidden"); document.getElementById("cart-bar").classList.remove("hidden");
+            setTimeout(() => { if(leafletMap) leafletMap.invalidateSize(); }, 200); lucide.createIcons();
         }
 
         function toggleAdminTabs(tabName) {
-            document.getElementById("panel-orders").classList.add("hidden");
-            document.getElementById("panel-products").classList.add("hidden");
-            document.getElementById("panel-sales").classList.add("hidden");
-            document.getElementById("panel-settings").classList.add("hidden");
-            
-            document.getElementById(`panel-${tabName}`).classList.remove("hidden");
-            lucide.createIcons();
+            document.getElementById("panel-orders").classList.add("hidden"); document.getElementById("panel-products").classList.add("hidden"); document.getElementById("panel-sales").classList.add("hidden"); document.getElementById("panel-settings").classList.add("hidden");
+            document.getElementById(`panel-${tabName}`).classList.remove("hidden"); lucide.createIcons();
         }
     </script>
 </body>
