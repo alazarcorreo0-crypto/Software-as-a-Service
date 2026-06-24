@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS MultiPedidOS - Sistema con Mapa Real</title>
+    <title>SaaS MultiPedidOS - Sistema Profesional de Órdenes</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -13,7 +13,6 @@
     <style>
         .modal { display: none; }
         .modal.active { display: flex; }
-        /* Evitar problemas de visualización del mapa con Tailwind */
         #real-map { z-index: 1; }
     </style>
 </head>
@@ -59,7 +58,7 @@
             
             <div class="grid grid-cols-1 gap-3">
                 <input type="text" id="client-name" placeholder="Tu Nombre Completo" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
-                <input type="tel" id="client-phone" placeholder="WhatsApp (Ej: +52155123456)" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
+                <input type="tel" id="client-phone" placeholder="Tu celular (Ej: 5512345678)" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
             </div>
 
             <div id="wrapper-map-section" class="space-y-2">
@@ -69,9 +68,7 @@
                         <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> Mi GPS
                     </button>
                 </div>
-                
                 <div id="real-map" class="w-full h-52 rounded-xl border border-slate-200 bg-slate-100"></div>
-                
                 <div class="flex gap-2">
                     <input type="text" id="client-address" placeholder="Dirección, Calle, Número y Colonia" class="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
                     <button onclick="searchAddressOnMap()" type="button" class="bg-slate-900 text-white px-3 rounded-xl text-xs font-bold hover:bg-black">Buscar</button>
@@ -101,9 +98,9 @@
     <main id="view-delivery" class="hidden max-w-md mx-auto px-4 mt-5 space-y-4">
         <div class="flex justify-between items-center">
             <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                <i data-lucide="navigation" class="w-5 h-5 text-indigo-600"></i> Ruta de Entregas
+                <i data-lucide="navigation" class="w-5 h-5 text-indigo-600"></i> Órdenes en Ruta
             </h2>
-            <span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-bold">Ruta Externa</span>
+            <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-1 rounded-full font-bold">Logística Delivery</span>
         </div>
         <div id="delivery-orders-container" class="space-y-3"></div>
     </main>
@@ -118,6 +115,9 @@
             </button>
             <button onclick="toggleAdminTabs('sales')" id="tab-sales" class="text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="wallet" class="w-4 h-4"></i> Corte e Historial
+            </button>
+            <button onclick="toggleAdminTabs('settings')" id="tab-settings" class="text-slate-500 pb-2 text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="settings" class="w-4 h-4"></i> Ajustes SaaS
             </button>
         </div>
 
@@ -151,6 +151,31 @@
                     <i data-lucide="calendar-days" class="w-4 h-4 text-slate-500"></i> Historial de Cortes Concluidos
                 </h3>
                 <div id="archived-shifts-box" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <div id="panel-settings" class="hidden space-y-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs space-y-4">
+                <h3 class="text-base font-black text-slate-900 flex items-center gap-1.5 text-indigo-600">
+                    <i data-lucide="message-square-code"></i> Configuración de Canal WhatsApp
+                </h3>
+                
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border">
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">Recibir alertas en WhatsApp</p>
+                        <p class="text-xs text-slate-400">Si se apaga, la app solo registrará los pedidos de forma interna.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="setting-whatsapp-active" onchange="saveBusinessSettings()" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 block">Número de WhatsApp Destino del Negocio</label>
+                    <input type="tel" id="setting-whatsapp-phone" oninput="saveBusinessSettings()" placeholder="Ej: 5215512345678 (Con código de país)" class="w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:border-indigo-500">
+                    <p class="text-[10px] text-slate-400 italic">Coloca el número completo sin espacios ni signos +. (México empieza con 521, Colombia con 57, etc.)</p>
+                </div>
             </div>
         </div>
     </main>
@@ -194,9 +219,14 @@
                     <input type="number" id="crud-price" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-500 block mb-1">Imagen del Producto (URL pública)</label>
-                    <input type="text" id="crud-img" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none">
-                </div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">Imagen del Producto</label>
+                    <div class="flex items-center gap-2 mt-1">
+                        <label class="flex-1 flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 border border-dashed rounded-xl p-2 cursor-pointer text-xs font-bold text-indigo-600">
+                            <span id="file-upload-status"><i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Cargar de Celular</span>
+                            <input type="file" id="crud-file-input" accept="image/*" onchange="processLocalImageFile(this)" class="hidden">
+                        </label>
+                    </div>
+                    <input type="hidden" id="crud-img"> </div>
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">Ingredientes Base (Separados por comas)</label>
                     <input type="text" id="crud-ingredients" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none" placeholder="Queso, Jamón, Cebolla">
@@ -214,10 +244,9 @@
     </div>
 
     <script>
-        // --- VARIABLES GLOBALES DEL MAPA REAL ---
         let leafletMap = null;
         let mapMarker = null;
-        let selectedLat = 19.4326; // Ciudad de México por defecto
+        let selectedLat = 19.4326; 
         let selectedLng = -99.1332;
 
         let products = JSON.parse(localStorage.getItem('saas_products')) || [
@@ -227,6 +256,12 @@
         let orders = JSON.parse(localStorage.getItem('saas_orders')) || [];
         let currentShiftSales = JSON.parse(localStorage.getItem('saas_shift_sales')) || [];
         let archivedShifts = JSON.parse(localStorage.getItem('saas_archived_shifts')) || [];
+        
+        // Ajustes por defecto del negocio
+        let bizSettings = JSON.parse(localStorage.getItem('saas_biz_settings')) || {
+            whatsappActive: true,
+            whatsappPhone: ""
+        };
 
         let cart = [];
         let activeProductForCustomization = null;
@@ -234,43 +269,57 @@
         let activeRoleMode = "client";
 
         window.onload = function() {
+            loadBusinessSettingsUI();
             renderClientMenu();
             renderAdminProducts();
             renderAdminOrders();
             renderDeliveryOrders();
             calculateFinanceSummary();
             renderArchivedShifts();
-            initRealMap(); // Cargar mapa interactivo
+            initRealMap();
             lucide.createIcons();
         };
 
-        // --- INICIALIZADOR DEL MAPA REAL (LEAFLET) ---
+        // CONFIGURACIÓN SAAS
+        function loadBusinessSettingsUI() {
+            document.getElementById("setting-whatsapp-active").checked = bizSettings.whatsappActive;
+            document.getElementById("setting-whatsapp-phone").value = bizSettings.whatsappPhone || "";
+        }
+
+        function saveBusinessSettings() {
+            bizSettings.whatsappActive = document.getElementById("setting-whatsapp-active").checked;
+            bizSettings.whatsappPhone = document.getElementById("setting-whatsapp-phone").value.trim();
+            localStorage.setItem('saas_biz_settings', JSON.stringify(bizSettings));
+        }
+
+        // PROCESADO DE FOTO LOCAL (CONVERSIÓN BASE64)
+        function processLocalImageFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("crud-img").value = e.target.result;
+                    document.getElementById("file-upload-status").innerHTML = `<i data-lucide="check" class="text-green-500 w-4 h-4 inline mr-1"></i>¡Foto Cargada!`;
+                    lucide.createIcons();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- MAPA LEAFLET ---
         function initRealMap() {
-            // Inicializa el mapa centrado en coordenadas base
             leafletMap = L.map('real-map').setView([selectedLat, selectedLng], 13);
-
-            // Cargar capa de diseño de calles de OpenStreetMap
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(leafletMap);
-
-            // Crear el marcador rojo arrastrable
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(leafletMap);
             mapMarker = L.marker([selectedLat, selectedLng], { draggable: true }).addTo(leafletMap);
             updateCoordsText(selectedLat, selectedLng);
 
-            // Escuchar evento cuando el usuario termina de arrastrar el pin
             mapMarker.on('dragend', function (e) {
                 let position = mapMarker.getLatLng();
-                selectedLat = position.lat;
-                selectedLng = position.lng;
+                selectedLat = position.lat; selectedLng = position.lng;
                 updateCoordsText(selectedLat, selectedLng);
             });
-
-            // Escuchar clics en cualquier parte del mapa para mover el pin inmediatamente
             leafletMap.on('click', function(e) {
                 mapMarker.setLatLng(e.latlng);
-                selectedLat = e.latlng.lat;
-                selectedLng = e.latlng.lng;
+                selectedLat = e.latlng.lat; selectedLng = e.latlng.lng;
                 updateCoordsText(selectedLat, selectedLng);
             });
         }
@@ -279,69 +328,38 @@
             document.getElementById("coordinates-display").innerText = `Lat: ${lat.toFixed(5)} | Lng: ${lng.toFixed(5)}`;
         }
 
-        // FUNCIÓN 1: Geolocalización por el GPS del Celular
         function locateUserGPS() {
-            if (!navigator.geolocation) return alert("Tu navegador no soporta geolocalización.");
-            
-            navigator.geolocation.getCurrentPosition(function(position) {
-                selectedLat = position.coords.latitude;
-                selectedLng = position.coords.longitude;
-                
+            if (!navigator.geolocation) return alert("GPS No disponible.");
+            navigator.geolocation.getCurrentPosition(position => {
+                selectedLat = position.coords.latitude; selectedLng = position.coords.longitude;
                 leafletMap.setView([selectedLat, selectedLng], 16);
                 mapMarker.setLatLng([selectedLat, selectedLng]);
                 updateCoordsText(selectedLat, selectedLng);
-            }, function() {
-                alert("No se pudo acceder a tu ubicación GPS. Por favor búscala manualmente en el mapa.");
             });
         }
 
-        // FUNCIÓN 2: Buscar dirección escrita con un buscador público gratuito (Nominatim)
         function searchAddressOnMap() {
-            let addressQuery = document.getElementById("client-address").value;
-            if (!addressQuery.trim()) return alert("Escribe una dirección para buscarla.");
-
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressQuery)}`)
-                .then(response => response.json())
-                .then(data => {
+            let q = document.getElementById("client-address").value;
+            if (!q.trim()) return;
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`)
+                .then(r => r.json()).then(data => {
                     if (data && data.length > 0) {
-                        selectedLat = parseFloat(data[0].lat);
-                        selectedLng = parseFloat(data[0].lon);
-                        
+                        selectedLat = parseFloat(data[0].lat); selectedLng = parseFloat(data[0].lon);
                         leafletMap.setView([selectedLat, selectedLng], 16);
                         mapMarker.setLatLng([selectedLat, selectedLng]);
                         updateCoordsText(selectedLat, selectedLng);
-                    } else {
-                        alert("No pudimos ubicar esa dirección en el mapa. Intenta arrastrando el pin manualmente.");
                     }
-                })
-                .catch(() => alert("Error en el buscador de mapas. Intenta mover el pin."));
+                });
         }
 
-        // --- INTERFAZ DEL CLIENTE Y REGISTROS ---
-        function setDeliveryType(mode) {
-            selectedDeliveryType = mode;
-            const mapSection = document.getElementById("wrapper-map-section");
-            
-            document.getElementById("type-deliv").className = mode === "delivery" ? "w-1/2 py-2.5 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-xs flex justify-center items-center gap-2" : "w-1/2 py-2.5 text-sm font-bold rounded-lg text-slate-600 flex justify-center items-center gap-2";
-            document.getElementById("type-pickup").className = mode === "pickup" ? "w-1/2 py-2.5 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-xs flex justify-center items-center gap-2" : "w-1/2 py-2.5 text-sm font-bold rounded-lg text-slate-600 flex justify-center items-center gap-2";
-            
-            if (mode === "delivery") {
-                mapSection.classList.remove("hidden");
-                // Forzar a Leaflet a recalcular tamaños al hacerse visible
-                setTimeout(() => { if(leafletMap) leafletMap.invalidateSize(); }, 200);
-            } else {
-                mapSection.classList.add("hidden");
-            }
-        }
-
+        // --- FLUJO DE TRANSMISIÓN DE PEDIDOS ---
         function submitClientOrder() {
-            if (cart.length === 0) return alert("🛒 Agregue al menos un artículo a su orden.");
+            if (cart.length === 0) return alert("🛒 Carrito vacío.");
             let name = document.getElementById("client-name").value.trim();
             let phone = document.getElementById("client-phone").value.trim();
             let address = document.getElementById("client-address").value.trim();
 
-            if (!name || !phone) return alert("👤 Nombre y teléfono son requeridos obligatoriamente.");
-            if (selectedDeliveryType === "delivery" && !address) return alert("📍 Indique la calle de su casa.");
+            if (!name || !phone) return alert("👤 Datos obligatorios faltantes.");
 
             let orderData = {
                 id: Date.now().toString().slice(-4),
@@ -358,25 +376,145 @@
             orders.push(orderData);
             localStorage.setItem('saas_orders', JSON.stringify(orders));
 
-            // Mensaje formateado para WhatsApp
-            let textMsg = `*NUEVO PEDIDO %23${orderData.id}*%0A*Cliente:* ${orderData.customerName}%0A*Modalidad:* ${selectedDeliveryType === 'delivery' ? 'A Domicilio' : 'Recoger en Tienda'}%0A`;
-            if(orderData.coords) textMsg += `*Ubicación Exacta:* https://maps.google.com/?q=${orderData.coords}%0A`;
-            textMsg += `*Total:* $${orderData.totalAmount.toFixed(2)}`;
+            alert("🚀 ¡Orden enviada correctamente al sistema!");
 
-            alert("🚀 ¡Orden procesada en el sistema!");
-            window.open(`https://wa.me/${orderData.customerPhone}?text=${textMsg}`, '_blank');
+            // Solo abre ventana de WhatsApp si la función está encendida en ajustes y hay un número configurado
+            if(bizSettings.whatsappActive && bizSettings.whatsappPhone) {
+                let textMsg = `*NUEVO PEDIDO %23${orderData.id}*%0A*Cliente:* ${orderData.customerName}%0A*Total:* $${orderData.totalAmount.toFixed(2)}`;
+                if(orderData.coords) textMsg += `%0A*Ruta:* https://maps.google.com/?q=${orderData.coords}`;
+                window.open(`https://wa.me/${bizSettings.whatsappPhone}?text=${textMsg}`, '_blank');
+            }
 
             cart = [];
             document.getElementById("client-name").value = "";
             document.getElementById("client-phone").value = "";
             document.getElementById("client-address").value = "";
             document.getElementById("cart-total").innerText = "$0.00";
-            renderClientMenu();
-            renderAdminOrders();
-            renderDeliveryOrders();
+            renderClientMenu(); renderAdminOrders(); renderDeliveryOrders();
         }
 
-        // El resto del código comercial permanece igual para control de roles y finanzas
+        // --- ADMINISTRACIÓN Y ROLES EN CADENA ---
+        function renderAdminOrders() {
+            const container = document.getElementById("admin-orders-container"); container.innerHTML = "";
+            if(orders.length===0) { container.innerHTML = "<p class='text-xs text-center py-4 text-slate-400'>Sin pedidos activos.</p>"; return; }
+            orders.forEach(o => {
+                let actionBtn = "";
+                if(o.status === "Pendiente") {
+                    actionBtn = `<button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold">Cocinar</button>`;
+                } else if(o.status === "Preparando") {
+                    actionBtn = `<button onclick="updateOrderStatus('${o.id}', 'En Camino')" class="bg-amber-500 text-white text-xs px-3 py-1.5 rounded-xl font-bold">Enviar a Repartidor (Despachar)</button>`;
+                } else if(o.status === "En Camino") {
+                    actionBtn = `<span class="text-xs text-amber-600 font-bold italic flex items-center gap-0.5"><i data-lucide="truck" class="w-3.5 h-3.5"></i> Repartidor llevándolo...</span>`;
+                }
+
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl border space-y-2">
+                        <div class="flex justify-between font-bold text-sm">
+                            <span>Orden #${o.id} - ${o.customerName}</span>
+                            <span class="text-xs px-2 bg-slate-100 rounded text-slate-700">${o.status}</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Dirección: ${o.addressDetails} | Total: <strong class="text-slate-900">$${o.totalAmount}</strong></p>
+                        <div class="flex justify-end pt-1 border-t border-slate-50">${actionBtn}</div>
+                    </div>`;
+            });
+            lucide.createIcons();
+        }
+
+        function renderDeliveryOrders() {
+            const container = document.getElementById("delivery-orders-container"); container.innerHTML = "";
+            // El repartidor solo ve las órdenes que el admin ya despachó ("En Camino")
+            let deliveryList = orders.filter(o => o.status === 'En Camino' && o.deliveryMode === 'delivery');
+            
+            if(deliveryList.length===0) { container.innerHTML = "<p class='text-xs text-center py-4 text-slate-400'>No tienes órdenes asignadas en ruta en este momento.</p>"; return; }
+            deliveryList.forEach(o => {
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl border space-y-3 shadow-sm">
+                        <p class="text-sm font-black">Pedido #${o.id} ➔ ${o.customerName}</p>
+                        <p class="text-xs text-slate-600"><strong>Entregar en:</strong> ${o.addressDetails}</p>
+                        <div class="flex gap-2">
+                            <button onclick="window.open('https://maps.google.com/?q=${o.coords}', '_blank')" class="w-1/2 bg-indigo-600 text-white text-xs py-2 rounded-xl font-bold flex justify-center items-center gap-1"><i data-lucide="map" class="w-4 h-4"></i> Lanzar GPS</button>
+                            <button onclick="finalizeOrderFromRole('${o.id}')" class="w-1/2 bg-emerald-600 text-white text-xs py-2 rounded-xl font-bold flex justify-center items-center gap-1"><i data-lucide="check" class="w-4 h-4"></i> Entregado</button>
+                        </div>
+                    </div>`;
+            });
+            lucide.createIcons();
+        }
+
+        function updateOrderStatus(id, nextStatus) {
+            let o = orders.find(ord => ord.id == id);
+            if(o) o.status = nextStatus;
+            localStorage.setItem('saas_orders', JSON.stringify(orders));
+            renderAdminOrders(); renderDeliveryOrders();
+        }
+
+        // REMOCIÓN DEFINITIVA DE PANTALLA E INGRESO EN HISTORIAL FINANCIERO
+        function finalizeOrderFromRole(id) {
+            let idx = orders.findIndex(ord => ord.id == id);
+            if (idx !== -1) {
+                let orderResolved = orders.splice(idx, 1)[0];
+                currentShiftSales.push(orderResolved);
+                
+                localStorage.setItem('saas_orders', JSON.stringify(orders));
+                localStorage.setItem('saas_shift_sales', JSON.stringify(currentShiftSales));
+                
+                renderAdminOrders(); renderDeliveryOrders(); calculateFinanceSummary();
+            }
+        }
+
+        // CORTE DE CAJA E HISTORIAL
+        function calculateFinanceSummary() {
+            let total = currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0);
+            document.getElementById("live-sales-amount").innerText = `$${total.toFixed(2)}`;
+            document.getElementById("live-sales-count").innerText = `${currentShiftSales.length} órdenes liquidadas`;
+        }
+
+        function closeCurrentShift() {
+            if(currentShiftSales.length === 0) return alert("Sin ventas por archivar.");
+            if (confirm("¿Cerrar turno de caja diario?")) {
+                archivedShifts.unshift({ date: new Date().toLocaleString(), ordersCount: currentShiftSales.length, revenue: currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0) });
+                currentShiftSales = [];
+                localStorage.setItem('saas_shift_sales', JSON.stringify(currentShiftSales));
+                localStorage.setItem('saas_archived_shifts', JSON.stringify(archivedShifts));
+                calculateFinanceSummary(); renderArchivedShifts();
+            }
+        }
+
+        function renderArchivedShifts() {
+            const container = document.getElementById("archived-shifts-box"); container.innerHTML = "";
+            archivedShifts.forEach(s => {
+                container.innerHTML += `<div class="bg-white p-3 rounded-xl border flex justify-between text-xs font-bold"><span>${s.date}</span><span class="bg-slate-50 px-2 py-1 border rounded">$${s.revenue.toFixed(2)}</span></div>`;
+            });
+        }
+
+        // --- SISTEMA INTERNO CRUD ---
+        function renderAdminProducts() {
+            const grid = document.getElementById("admin-products-grid"); grid.innerHTML = "";
+            products.forEach(p => {
+                grid.innerHTML += `<div class="bg-white p-3 rounded-xl border flex gap-3 items-center text-xs font-bold"><img src="${p.img}" class="w-10 h-10 object-cover rounded-lg border"> <span class="flex-1 truncate">${p.name}</span> <span>$${p.price}</span></div>`;
+            });
+        }
+
+        function triggerProductModal() { 
+            document.getElementById("file-upload-status").innerHTML = `<i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Cargar de Celular`;
+            document.getElementById("crud-id").value = "";
+            document.getElementById("crud-name").value = "";
+            document.getElementById("crud-price").value = "";
+            document.getElementById("crud-img").value = "";
+            document.getElementById("crud-ingredients").value = "";
+            document.getElementById("product-crud-modal").classList.add("active"); 
+            lucide.createIcons();
+        }
+        function closeCrudModal() { document.getElementById("product-crud-modal").classList.remove("active"); }
+        function saveCrudProduct() {
+            let imgData = document.getElementById("crud-img").value || "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500";
+            products.push({ id: Date.now(), name: document.getElementById("crud-name").value, price: parseFloat(document.getElementById("crud-price").value), img: imgData, ingredients: document.getElementById("crud-ingredients").value.split(',') });
+            localStorage.setItem('saas_products', JSON.stringify(products));
+            closeCrudModal(); renderClientMenu(); renderAdminProducts();
+        }
+
+        function triggerLightbox(imageSrc) { document.getElementById("lightbox-img").src = imageSrc; document.getElementById("lightbox-modal").classList.add("active"); }
+        function closeLightbox() { document.getElementById("lightbox-modal").classList.remove("active"); }
+
         function accessRole(role, expectedPassword) {
             let pass = prompt(`Ingrese clave de seguridad:`);
             if (pass === expectedPassword) {
@@ -386,7 +524,7 @@
                 document.getElementById("view-admin").classList.add("hidden");
                 document.getElementById("view-delivery").classList.add("hidden");
                 document.getElementById("role-banner").classList.remove("hidden");
-                document.getElementById("role-banner-text").innerText = role === 'admin_user' ? "Panel Admin" : "Módulo Repartidores";
+                document.getElementById("role-banner-text").innerText = role === 'admin_user' ? "Panel de Control de Administración" : "Módulo de Operaciones para Repartidores";
                 document.getElementById(role === 'admin_user' ? "view-admin" : "view-delivery").classList.remove("hidden");
                 if(role === 'admin_user') toggleAdminTabs('orders');
                 else renderDeliveryOrders();
@@ -409,128 +547,10 @@
             document.getElementById("panel-orders").classList.add("hidden");
             document.getElementById("panel-products").classList.add("hidden");
             document.getElementById("panel-sales").classList.add("hidden");
+            document.getElementById("panel-settings").classList.add("hidden");
             document.getElementById(`panel-${tabName}`).classList.remove("hidden");
             lucide.createIcons();
         }
-
-        function renderClientMenu() {
-            const box = document.getElementById("client-menu-box"); box.innerHTML = "";
-            products.forEach(p => {
-                box.innerHTML += `
-                    <div class="bg-white p-3 rounded-2xl shadow-xs border border-slate-100 flex gap-4 items-center">
-                        <img onclick="triggerLightbox('${p.img}')" src="${p.img}" class="w-20 h-20 object-cover rounded-xl bg-slate-100 cursor-zoom-in">
-                        <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-slate-900 text-sm truncate">${p.name}</h3>
-                            <p class="text-indigo-600 font-black text-base mt-1">$${p.price.toFixed(2)}</p>
-                        </div>
-                        <button onclick="launchCustomModal(${p.id})" class="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl"><i data-lucide="plus" class="w-5 h-5"></i></button>
-                    </div>`;
-            });
-            lucide.createIcons();
-        }
-
-        function launchCustomModal(productId) {
-            const prod = products.find(p => p.id === productId); if (!prod) return;
-            activeProductForCustomization = prod;
-            document.getElementById("cust-modal-title").innerText = prod.name;
-            document.getElementById("cust-modal-price").innerText = `$${prod.price.toFixed(2)}`;
-            const ingContainer = document.getElementById("ingredients-checkboxes-box"); ingContainer.innerHTML = "";
-            if (prod.ingredients) {
-                prod.ingredients.forEach(ing => {
-                    ingContainer.innerHTML += `<label class="flex items-center gap-2.5 bg-slate-50 px-3 py-2 rounded-xl text-xs font-semibold"><input type="checkbox" checked value="${ing}" class="w-4 h-4 text-indigo-600"> <span>${ing}</span></label>`;
-                });
-            }
-            document.getElementById("custom-order-modal").classList.add("active");
-        }
-
-        function closeCustomModal() { document.getElementById("custom-order-modal").classList.remove("active"); }
-        function commitToCart() {
-            cart.push({ product: activeProductForCustomization, excluded: [], notes: document.getElementById("cust-modal-notes").value });
-            document.getElementById("cart-total").innerText = `$${cart.reduce((acc, e) => acc + e.product.price, 0).toFixed(2)}`;
-            closeCustomModal();
-        }
-
-        function renderDeliveryOrders() {
-            const container = document.getElementById("delivery-orders-container"); container.innerHTML = "";
-            let deliveryList = orders.filter(o => o.deliveryMode === 'delivery');
-            if(deliveryList.length===0) { container.innerHTML = "<p class='text-xs text-center py-4 text-slate-400'>No hay rutas.</p>"; return; }
-            deliveryList.forEach(o => {
-                container.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl border space-y-3">
-                        <p class="text-sm font-bold">Entrega #${o.id} - ${o.customerName}</p>
-                        <p class="text-xs text-slate-600">Dirección: ${o.addressDetails}</p>
-                        <div class="flex gap-2">
-                            <button onclick="window.open('https://maps.google.com/?q=${o.coords}', '_blank')" class="w-1/2 bg-indigo-600 text-white text-xs py-2 rounded-xl font-bold">Abrir Navegador</button>
-                            <button onclick="finalizeOrderFromRole('${o.id}')" class="w-1/2 bg-emerald-600 text-white text-xs py-2 rounded-xl font-bold">Completado</button>
-                        </div>
-                    </div>`;
-            });
-            lucide.createIcons();
-        }
-
-        function renderAdminOrders() {
-            const container = document.getElementById("admin-orders-container"); container.innerHTML = "";
-            if(orders.length===0) { container.innerHTML = "<p class='text-xs text-center py-4 text-slate-400'>Sin pedidos.</p>"; return; }
-            orders.forEach(o => {
-                container.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl border space-y-2">
-                        <p class="text-sm font-bold">Orden #${o.id} - $${o.totalAmount.toFixed(2)}</p>
-                        <p class="text-xs text-slate-500">Cliente: ${o.customerName} | Modo: ${o.deliveryMode}</p>
-                        <button onclick="finalizeOrderFromRole('${o.id}')" class="bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl font-bold">Despachar</button>
-                    </div>`;
-            });
-            lucide.createIcons();
-        }
-
-        function finalizeOrderFromRole(id) {
-            let idx = orders.findIndex(ord => ord.id == id);
-            if (idx !== -1) {
-                currentShiftSales.push(orders.splice(idx, 1)[0]);
-                localStorage.setItem('saas_orders', JSON.stringify(orders));
-                localStorage.setItem('saas_shift_sales', JSON.stringify(currentShiftSales));
-                renderAdminOrders(); renderDeliveryOrders(); calculateFinanceSummary();
-            }
-        }
-
-        function calculateFinanceSummary() {
-            let total = currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0);
-            document.getElementById("live-sales-amount").innerText = `$${total.toFixed(2)}`;
-            document.getElementById("live-sales-count").innerText = `${currentShiftSales.length} órdenes liquidadas`;
-        }
-
-        function closeCurrentShift() {
-            if(currentShiftSales.length === 0) return;
-            archivedShifts.unshift({ date: new Date().toLocaleString(), ordersCount: currentShiftSales.length, revenue: currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0) });
-            currentShiftSales = [];
-            localStorage.setItem('saas_shift_sales', JSON.stringify(currentShiftSales));
-            localStorage.setItem('saas_archived_shifts', JSON.stringify(archivedShifts));
-            calculateFinanceSummary(); renderArchivedShifts();
-        }
-
-        function renderArchivedShifts() {
-            const container = document.getElementById("archived-shifts-box"); container.innerHTML = "";
-            archivedShifts.forEach(s => {
-                container.innerHTML += `<div class="bg-white p-3 rounded-xl border flex justify-between text-xs font-bold"><span>${s.date}</span><span class="bg-slate-50 px-2 py-1 border rounded">${s.revenue.toFixed(2)}</span></div>`;
-            });
-        }
-
-        function renderAdminProducts() {
-            const grid = document.getElementById("admin-products-grid"); grid.innerHTML = "";
-            products.forEach(p => {
-                grid.innerHTML += `<div class="bg-white p-3 rounded-xl border flex gap-3 items-center text-xs font-bold"><img src="${p.img}" class="w-10 h-10 object-cover rounded-lg"> <span class="flex-1 truncate">${p.name}</span> <span>$${p.price}</span></div>`;
-            });
-        }
-
-        function triggerProductModal() { document.getElementById("product-crud-modal").classList.add("active"); }
-        function closeCrudModal() { document.getElementById("product-crud-modal").classList.remove("active"); }
-        function saveCrudProduct() {
-            products.push({ id: Date.now(), name: document.getElementById("crud-name").value, price: parseFloat(document.getElementById("crud-price").value), img: document.getElementById("crud-img").value, ingredients: document.getElementById("crud-ingredients").value.split(',') });
-            localStorage.setItem('saas_products', JSON.stringify(products));
-            closeCrudModal(); renderClientMenu(); renderAdminProducts();
-        }
-
-        function triggerLightbox(imageSrc) { document.getElementById("lightbox-img").src = imageSrc; document.getElementById("lightbox-modal").classList.add("active"); }
-        function closeLightbox() { document.getElementById("lightbox-modal").classList.remove("active"); }
     </script>
 </body>
 </html>
