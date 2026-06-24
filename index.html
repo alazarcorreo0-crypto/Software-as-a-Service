@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiPedidOS Premium - Sistema de Gestión de Órdenes</title>
+    <title>MultiPedidOS Premium - Cloud Base</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -14,7 +14,6 @@
         .modal { display: none; }
         .modal.active { display: flex; }
         #real-map { z-index: 1; }
-        /* Personalización de scrollbar tipo app móvil */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -29,9 +28,9 @@
             </div>
             <div>
                 <h1 class="text-lg font-black text-slate-900 tracking-tight flex items-center gap-1">
-                    MultiPedidOS <span class="text-xs bg-slate-900 text-white font-bold px-1.5 py-0.5 rounded-md">SaaS</span>
+                    MultiPedidOS <span class="text-xs bg-indigo-600 text-white font-bold px-1.5 py-0.5 rounded-md flex items-center gap-0.5"><i data-lucide="cloud" class="w-3 h-3"></i> Cloud</span>
                 </h1>
-                <p class="text-[11px] text-slate-400 font-medium">Logística comercial inteligente</p>
+                <p class="text-[11px] text-slate-400 font-medium">Logística en tiempo real</p>
             </div>
         </div>
         <div class="flex gap-2">
@@ -79,7 +78,7 @@
                 <div class="flex justify-between items-center">
                     <label class="block text-xs font-bold text-slate-500">Ajusta el pin en tu casa:</label>
                     <button onclick="locateUserGPS()" type="button" class="text-xs text-[#06C167] font-black flex items-center gap-1 hover:underline bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100/60 transition-all">
-                        <i data-lucide="crosshair" class="w-3.5 h-3.5 animate-spin-slow"></i> Usar mi GPS
+                        <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> Usar mi GPS
                     </button>
                 </div>
                 
@@ -99,8 +98,7 @@
             <h2 class="font-black text-slate-900 text-base tracking-tight flex items-center gap-2">
                 <i data-lucide="utensils" class="w-5 h-5 text-[#06C167]"></i> Menú Seleccionado
             </h2>
-            <div id="client-menu-box" class="grid grid-cols-1 gap-3.5">
-                </div>
+            <div id="client-menu-box" class="grid grid-cols-1 gap-3.5"></div>
         </div>
     </main>
 
@@ -114,7 +112,6 @@
         </button>
     </div>
 
-
     <main id="view-delivery" class="hidden max-w-md mx-auto px-4 mt-5 space-y-4">
         <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100">
             <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
@@ -122,13 +119,10 @@
             </h2>
             <span class="bg-emerald-50 text-[#06C167] border border-emerald-100 text-xs px-3 py-1 rounded-full font-black">En Tránsito</span>
         </div>
-        <div id="delivery-orders-container" class="space-y-3.5">
-            </div>
+        <div id="delivery-orders-container" class="space-y-3.5"></div>
     </main>
 
-
     <main id="view-admin" class="hidden max-w-3xl mx-auto px-4 mt-5 space-y-6">
-        
         <div class="border-b border-slate-200 flex gap-6 overflow-x-auto pb-1 bg-white p-3 rounded-2xl border border-slate-100 shadow-2xs">
             <button onclick="toggleAdminTabs('orders')" id="tab-orders" class="border-b-2 border-[#06C167] text-slate-900 pb-2 text-xs font-black flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
                 <i data-lucide="clock" class="w-4 h-4 text-[#06C167]"></i> Monitoreo de Órdenes
@@ -150,7 +144,7 @@
 
         <div id="panel-products" class="hidden space-y-4">
             <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100">
-                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider text-slate-400">Estructura del Menú</h3>
+                <h3 class="text-sm font-black text-slate-400 uppercase tracking-wider">Estructura del Menú</h3>
                 <button onclick="triggerProductModal()" class="bg-[#06C167] hover:bg-emerald-600 text-white text-xs font-black px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer">
                     <i data-lucide="plus" class="w-4 h-4"></i> Agregar Producto
                 </button>
@@ -169,13 +163,11 @@
                     <i data-lucide="lock" class="w-4 h-4 text-emerald-400"></i> Realizar Corte de Caja
                 </button>
             </div>
-            
             <div class="space-y-3">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                     <i data-lucide="archive" class="w-4 h-4 text-slate-400"></i> Historial de Cortes Concluidos
                 </h3>
-                <div id="archived-shifts-box" class="space-y-2.5">
-                    </div>
+                <div id="archived-shifts-box" class="space-y-2.5"></div>
             </div>
         </div>
 
@@ -184,33 +176,29 @@
                 <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5 text-slate-400 uppercase tracking-wider">
                     <i data-lucide="message-circle" class="text-[#06C167]"></i> Ajustes de Transmisión WhatsApp
                 </h3>
-                
                 <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                     <div>
                         <p class="text-sm font-black text-slate-800">Alertas redirigidas a WhatsApp</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Si se desactiva, la app opera de manera interna sin desviar al cliente.</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Si se desactiva, la app opera de manera interna.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer select-none">
                         <input type="checkbox" id="setting-whatsapp-active" onchange="saveBusinessSettings()" class="sr-only peer" checked>
                         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#06C167]"></div>
                     </label>
                 </div>
-
                 <div class="space-y-1">
-                    <label class="text-xs font-black text-slate-500">Número Celular Destino (Propietario)</label>
-                    <input type="tel" id="setting-whatsapp-phone" oninput="saveBusinessSettings()" placeholder="Ej: 5215512345678" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-[#06C167] focus:bg-white transition-all">
-                    <p class="text-[10px] text-slate-400 font-medium italic mt-1">Coloca código de país sin signos (+) ni espacios. (México: 521, Colombia: 57, etc.)</p>
+                    <label class="text-xs font-black text-slate-500">Número Celular Destino</label>
+                    <input type="tel" id="setting-whatsapp-phone" oninput="saveBusinessSettings()" placeholder="Ej: 5215512345678" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-[#06C167]">
                 </div>
             </div>
         </div>
     </main>
 
-
     <div id="custom-order-modal" class="modal fixed inset-0 bg-slate-950/60 z-50 justify-center items-center p-4 backdrop-blur-xs">
         <div class="bg-white rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
             <div class="flex justify-between items-start">
                 <div>
-                    <h3 id="cust-modal-title" class="text-base font-black text-slate-900 tracking-tight">Personalizar</h3>
+                    <h3 id="cust-modal-title" class="text-base font-black text-slate-900">Personalizar</h3>
                     <p id="cust-modal-price" class="text-sm font-black text-[#06C167] mt-0.5"></p>
                 </div>
                 <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-1.5 rounded-full border cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -222,7 +210,7 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1.5">Instrucciones Especiales</label>
-                    <textarea id="cust-modal-notes" rows="2" placeholder="Ej: Sin aderezos, bien cocido, salsa aparte..." class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-[#06C167] focus:bg-white resize-none transition-all"></textarea>
+                    <textarea id="cust-modal-notes" rows="2" placeholder="Ej: Sin aderezos..." class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-[#06C167] resize-none"></textarea>
                 </div>
             </div>
             <button onclick="commitToCart()" class="w-full bg-[#06C167] text-white font-black py-3 rounded-2xl text-xs hover:bg-emerald-600 transition-all flex justify-center items-center gap-1 shadow-md cursor-pointer">
@@ -247,14 +235,14 @@
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">Fotografía del Artículo</label>
                     <label class="flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 border border-dashed rounded-xl p-3 cursor-pointer text-xs font-bold text-[#06C167] border-slate-200 transition-all">
-                        <span id="file-upload-status"><i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Abrir Cámara / Galería</span>
+                        <span id="file-upload-status"><i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Tomar Foto / Galería</span>
                         <input type="file" id="crud-file-input" accept="image/*" onchange="processLocalImageFile(this)" class="hidden">
                     </label>
                     <input type="hidden" id="crud-img">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">Ingredientes Base (Separar con comas)</label>
-                    <input type="text" id="crud-ingredients" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-[#06C167]" placeholder="Carne, Queso, Lechuga, Tomate">
+                    <input type="text" id="crud-ingredients" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:border-[#06C167]" placeholder="Carne, Queso, Lechuga">
                 </div>
             </div>
             <div class="flex gap-2 justify-end pt-2">
@@ -265,102 +253,111 @@
     </div>
 
     <div id="lightbox-modal" onclick="closeLightbox()" class="modal fixed inset-0 bg-black/95 z-50 justify-center items-center p-4 cursor-zoom-out">
-        <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl transition-all">
+        <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl">
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <script>
-        let leafletMap = null;
-        let mapMarker = null;
-        let selectedLat = 19.4326; 
-        let selectedLng = -99.1332;
-
-        // --- BANCO DE DATOS LOCALES ---
-        let products = JSON.parse(localStorage.getItem('saas_products')) || [
-            { id: 1, name: "Hamburguesa Bacon Suprema", price: 145, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500", ingredients: ["Carne de Res", "Queso Amarillo", "Tocino Crujiente", "Lechuga", "Mayonesa"] },
-            { id: 2, name: "Pizza Pepperoni Italiana", price: 165, img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500", ingredients: ["Masa Artesanal", "Salsa Tomate", "Queso Mozzarella", "Pepperoni"] },
-            { id: 3, name: "Tacos al Pastor Especial (5 pzs)", price: 90, img: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=500", ingredients: ["Tortilla de Maíz", "Carne al Pastor", "Cebolla", "Cilantro", "Piña"] }
-        ];
-
-        let orders = JSON.parse(localStorage.getItem('saas_orders')) || [];
-        let currentShiftSales = JSON.parse(localStorage.getItem('saas_shift_sales')) || [];
-        let archivedShifts = JSON.parse(localStorage.getItem('saas_archived_shifts')) || [];
-        let bizSettings = JSON.parse(localStorage.getItem('saas_biz_settings')) || { whatsappActive: true, whatsappPhone: "" };
-
-        let cart = [];
-        let activeProductForCustomization = null;
-        let selectedDeliveryType = "delivery"; 
-        let activeRoleMode = "client";
-
-        window.onload = function() {
-            document.getElementById("setting-whatsapp-active").checked = bizSettings.whatsappActive;
-            document.getElementById("setting-whatsapp-phone").value = bizSettings.whatsappPhone || "";
-            
-            renderClientMenu();
-            renderAdminProducts();
-            renderAdminOrders();
-            renderDeliveryOrders();
-            calculateFinanceSummary();
-            renderArchivedShifts();
-            initRealMap();
-            lucide.createIcons();
+        // 🔥 TUS CREDENCIALES DE PROYECTO INYECTADAS DIRECTAMENTE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDWhY0PYSJ1w1enQ98lE8hVBl5oaZf5CKE",
+            authDomain: "multi-pedidos.firebaseapp.com",
+            projectId: "multi-pedidos",
+            storageBucket: "multi-pedidos.firebasestorage.app",
+            messagingSenderId: "553364142011",
+            appId: "1:553364142011:web:518c3831855135fbabb69e",
+            measurementId: "G-G59Y4XXJDM"
         };
 
-        function persistDatabase() {
-            localStorage.setItem('saas_products', JSON.stringify(products));
-            localStorage.setItem('saas_orders', JSON.stringify(orders));
-            localStorage.setItem('saas_shift_sales', JSON.stringify(currentShiftSales));
-            localStorage.setItem('saas_archived_shifts', JSON.stringify(archivedShifts));
-        }
+        // Inicialización de la Nube
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        // --- CONVERTIDOR DE IMAGEN A TEXTO EN TIEMPO REAL ---
-        function processLocalImageFile(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById("crud-img").value = e.target.result;
-                    document.getElementById("file-upload-status").innerHTML = `<i data-lucide="check" class="text-[#06C167] w-4 h-4 inline mr-1"></i>¡Imagen en memoria!`;
-                    lucide.createIcons();
-                };
-                reader.readAsDataURL(input.files[0]);
+        const productsCol = collection(db, "productos");
+        const ordersCol = collection(db, "pedidos");
+        const salesCol = collection(db, "historial_ventas");
+
+        let leafletMap = null; let mapMarker = null;
+        let selectedLat = 19.4326; let selectedLng = -99.1332;
+        let products = []; let orders = []; let currentShiftSales = []; let archivedShifts = [];
+        let bizSettings = { whatsappActive: true, whatsappPhone: "" };
+        let cart = []; let activeProductForCustomization = null; let selectedDeliveryType = "delivery";
+
+        // --- ESCUCHADORES DINÁMICOS CLOUD (SINCRONIZACIÓN AUTOMÁTICA) ---
+        
+        onSnapshot(productsCol, (snapshot) => {
+            products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            if(products.length === 0) {
+                products = [
+                    { id: "1", name: "Hamburguesa Bacon Suprema", price: 145, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500", ingredients: ["Carne", "Queso", "Tocino"] },
+                    { id: "2", name: "Pizza Pepperoni Italiana", price: 165, img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500", ingredients: ["Queso", "Pepperoni"] }
+                ];
             }
-        }
+            renderClientMenu();
+            renderAdminProducts();
+        });
 
-        // --- CONEXIÓN CARTOGRÁFICA LEAFLET ---
-        function initRealMap() {
+        onSnapshot(ordersCol, (snapshot) => {
+            orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderAdminOrders();
+            renderDeliveryOrders();
+        });
+
+        onSnapshot(salesCol, (snapshot) => {
+            archivedShifts = snapshot.docs.map(doc => doc.data()).sort((a,b) => b.timestamp - a.timestamp);
+            renderArchivedShifts();
+        });
+
+        onSnapshot(doc(db, "ajustes", "config_general"), (docSnap) => {
+            if(docSnap.exists()) {
+                bizSettings = docSnap.data();
+                document.getElementById("setting-whatsapp-active").checked = bizSettings.whatsappActive;
+                document.getElementById("setting-whatsapp-phone").value = bizSettings.whatsappPhone || "";
+            }
+        });
+
+        const localShift = localStorage.getItem('saas_shift_sales');
+        if(localShift) { currentShiftSales = JSON.parse(localShift); }
+
+        // --- MAPA LEAFLET ---
+        window.initRealMap = function() {
             leafletMap = L.map('real-map').setView([selectedLat, selectedLng], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(leafletMap);
             mapMarker = L.marker([selectedLat, selectedLng], { draggable: true }).addTo(leafletMap);
-            
             mapMarker.on('dragend', function (e) {
-                let pos = mapMarker.getLatLng(); selectedLat = pos.lat; selectedLng = pos.lng; updateCoordsText(selectedLat, selectedLng);
+                let pos = mapMarker.getLatLng(); selectedLat = pos.lat; selectedLng = pos.lng; window.updateCoordsText(selectedLat, selectedLng);
             });
             leafletMap.on('click', function(e) {
-                mapMarker.setLatLng(e.latlng); selectedLat = e.latlng.lat; selectedLng = e.latlng.lng; updateCoordsText(selectedLat, selectedLng);
+                mapMarker.setLatLng(e.latlng); selectedLat = e.latlng.lat; selectedLng = e.latlng.lng; window.updateCoordsText(selectedLat, selectedLng);
             });
-            updateCoordsText(selectedLat, selectedLng);
-        }
-        function updateCoordsText(lat, lng) { document.getElementById("coordinates-display").innerText = `Lat: ${lat.toFixed(5)} | Lng: ${lng.toFixed(5)}`; }
-        
-        function locateUserGPS() {
-            navigator.geolocation.getCurrentPosition(position => {
-                selectedLat = position.coords.latitude; selectedLng = position.coords.longitude;
-                leafletMap.setView([selectedLat, selectedLng], 16); mapMarker.setLatLng([selectedLat, selectedLng]); updateCoordsText(selectedLat, selectedLng);
-            }, () => alert("GPS inestable o sin accesos."));
+            window.updateCoordsText(selectedLat, selectedLng);
         }
 
-        function searchAddressOnMap() {
+        window.updateCoordsText = function(lat, lng) { 
+            document.getElementById("coordinates-display").innerText = `Lat: ${lat.toFixed(5)} | Lng: ${lng.toFixed(5)}`; 
+        }
+        
+        window.locateUserGPS = function() {
+            navigator.geolocation.getCurrentPosition(position => {
+                selectedLat = position.coords.latitude; selectedLng = position.coords.longitude;
+                leafletMap.setView([selectedLat, selectedLng], 16); mapMarker.setLatLng([selectedLat, selectedLng]); window.updateCoordsText(selectedLat, selectedLng);
+            });
+        }
+
+        window.searchAddressOnMap = function() {
             let q = document.getElementById("client-address").value; if (!q.trim()) return;
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`)
                 .then(r => r.json()).then(data => {
                     if (data && data.length > 0) {
                         selectedLat = parseFloat(data[0].lat); selectedLng = parseFloat(data[0].lon);
-                        leafletMap.setView([selectedLat, selectedLng], 16); mapMarker.setLatLng([selectedLat, selectedLng]); updateCoordsText(selectedLat, selectedLng);
+                        leafletMap.setView([selectedLat, selectedLng], 16); mapMarker.setLatLng([selectedLat, selectedLng]); window.updateCoordsText(selectedLat, selectedLng);
                     }
                 });
         }
 
-        function setDeliveryType(mode) {
+        window.setDeliveryType = function(mode) {
             selectedDeliveryType = mode;
             document.getElementById("type-deliv").className = mode === "delivery" ? "w-1/2 py-3 text-xs font-black rounded-xl bg-white text-slate-900 shadow-xs flex justify-center items-center gap-2" : "w-1/2 py-3 text-xs font-black rounded-xl text-slate-500 flex justify-center items-center gap-2";
             document.getElementById("type-pickup").className = mode === "pickup" ? "w-1/2 py-3 text-xs font-black rounded-xl bg-white text-slate-900 shadow-xs flex justify-center items-center gap-2" : "w-1/2 py-3 text-xs font-black rounded-xl text-slate-500 flex justify-center items-center gap-2";
@@ -368,19 +365,19 @@
             setTimeout(() => { if(leafletMap) leafletMap.invalidateSize(); }, 210);
         }
 
-        // --- CÁTALOGO RESPONSIVO CLIENTE ---
+        // --- RENDERIZADO CATÁLOGO ---
         function renderClientMenu() {
             const box = document.getElementById("client-menu-box"); box.innerHTML = "";
             products.forEach(p => {
                 box.innerHTML += `
-                    <div class="bg-white p-3.5 rounded-2xl border border-slate-100 flex gap-4 items-center shadow-2xs hover:shadow-xs transition-all">
-                        <img onclick="triggerLightbox('${p.img}')" src="${p.img}" class="w-20 h-20 object-cover rounded-xl bg-slate-50 cursor-zoom-in border border-slate-100/60">
+                    <div class="bg-white p-3.5 rounded-2xl border border-slate-100 flex gap-4 items-center shadow-2xs">
+                        <img onclick="triggerLightbox('${p.img}')" src="${p.img}" class="w-20 h-20 object-cover rounded-xl bg-slate-50 cursor-zoom-in border">
                         <div class="flex-1 min-w-0">
                             <h3 class="font-black text-slate-900 text-sm tracking-tight truncate">${p.name}</h3>
                             <p class="text-[11px] text-slate-400 font-medium mt-0.5 truncate">${p.ingredients ? p.ingredients.join(', ') : ''}</p>
                             <p class="text-[#06C167] font-black text-base mt-1">$${p.price.toFixed(2)}</p>
                         </div>
-                        <button onclick="launchCustomModal(${p.id})" class="bg-slate-50 hover:bg-[#06C167] hover:text-white text-slate-700 p-2.5 rounded-xl transition-all border cursor-pointer border-slate-200/50">
+                        <button onclick="launchCustomModal('${p.id}')" class="bg-slate-50 hover:bg-[#06C167] hover:text-white text-slate-700 p-2.5 rounded-xl border border-slate-200/50 cursor-pointer">
                             <i data-lucide="plus" class="w-4 h-4"></i>
                         </button>
                     </div>`;
@@ -388,7 +385,7 @@
             lucide.createIcons();
         }
 
-        function launchCustomModal(productId) {
+        window.launchCustomModal = function(productId) {
             const prod = products.find(p => p.id === productId); if (!prod) return;
             activeProductForCustomization = prod;
             document.getElementById("cust-modal-title").innerText = prod.name;
@@ -398,132 +395,103 @@
             if (prod.ingredients) {
                 prod.ingredients.forEach(ing => {
                     box.innerHTML += `
-                        <label class="flex items-center justify-between bg-slate-50 px-3.5 py-2.5 rounded-xl text-xs font-bold border border-slate-150 cursor-pointer select-none">
+                        <label class="flex items-center justify-between bg-slate-50 px-3.5 py-2.5 rounded-xl text-xs font-bold border border-slate-150 cursor-pointer">
                             <span class="text-slate-800">${ing}</span>
-                            <input type="checkbox" checked value="${ing}" class="w-4 h-4 rounded text-[#06C167] focus:ring-[#06C167]">
+                            <input type="checkbox" checked value="${ing}" class="w-4 h-4 rounded text-[#06C167]">
                         </label>`;
                 });
             }
             document.getElementById("custom-order-modal").classList.add("active");
         }
-        function closeCustomModal() { document.getElementById("custom-order-modal").classList.remove("active"); }
 
-        function commitToCart() {
+        window.closeCustomModal = function() { document.getElementById("custom-order-modal").classList.remove("active"); }
+
+        window.commitToCart = function() {
             const inputs = document.getElementById("ingredients-checkboxes-box").querySelectorAll("input[type='checkbox']");
-            let excluded = [];
-            inputs.forEach(i => { if(!i.checked) excluded.push(i.value); });
+            let excluded = []; inputs.forEach(i => { if(!i.checked) excluded.push(i.value); });
             cart.push({ product: activeProductForCustomization, excluded: excluded, notes: document.getElementById("cust-modal-notes").value.trim() });
             document.getElementById("cart-total").innerText = `$${cart.reduce((acc, e) => acc + e.product.price, 0).toFixed(2)}`;
-            closeCustomModal();
+            window.closeCustomModal();
         }
 
-        function submitClientOrder() {
-            if (cart.length === 0) return alert("🛒 Agrega productos a tu bolsa.");
+        window.submitClientOrder = async function() {
+            if (cart.length === 0) return alert("🛒 Bolsa vacía.");
             let name = document.getElementById("client-name").value.trim();
             let phone = document.getElementById("client-phone").value.trim();
             let address = document.getElementById("client-address").value.trim();
-            if (!name || !phone) return alert("👤 Por favor completa tu nombre y número.");
-            if (selectedDeliveryType === "delivery" && !address) return alert("📍 Indica la calle de entrega.");
+            if (!name || !phone) return alert("👤 Faltan datos obligatorios.");
+            if (selectedDeliveryType === "delivery" && !address) return alert("📍 Indica dirección.");
 
             let orderData = {
-                id: Date.now().toString().slice(-4),
-                customerName: name,
-                customerPhone: phone,
-                deliveryMode: selectedDeliveryType,
-                addressDetails: selectedDeliveryType === "delivery" ? address : "Recoge en local de la Tienda",
+                customerName: name, customerPhone: phone, deliveryMode: selectedDeliveryType,
+                addressDetails: selectedDeliveryType === "delivery" ? address : "Recoge en local",
                 coords: selectedDeliveryType === "delivery" ? `${selectedLat.toFixed(5)},${selectedLng.toFixed(5)}` : null,
-                items: [...cart],
-                totalAmount: cart.reduce((acc, entry) => acc + entry.product.price, 0),
-                status: "Pendiente"
+                items: [...cart], totalAmount: cart.reduce((acc, entry) => acc + entry.product.price, 0),
+                status: "Pendiente", timestamp: Date.now()
             };
 
-            orders.push(orderData);
-            persistDatabase();
-            alert("🚀 ¡Pedido enviado con éxito!");
+            await addDoc(ordersCol, orderData);
+            alert("🚀 ¡Pedido en camino a la nube!");
 
             if(bizSettings.whatsappActive && bizSettings.whatsappPhone) {
-                let msg = `*NUEVO PEDIDO %23${orderData.id}*%0A*Cliente:* ${orderData.customerName}%0A%0A*Artículos:*%0A`;
-                orderData.items.forEach(i => {
-                    msg += `• ${i.product.name}%0A`;
-                    if(i.excluded.length > 0) msg += `  _Sin:_ ${i.excluded.join(', ')}%0A`;
-                    if(i.notes) msg += `  _Nota:_ "${i.notes}"%0A`;
-                });
-                msg += `%0A*Total:* $${orderData.totalAmount.toFixed(2)}`;
-                if(orderData.coords) msg += `%0A*Ruta:* https://maps.google.com/?q=${orderData.coords}`;
+                let msg = `*NUEVO PEDIDO*%0A*Cliente:* ${orderData.customerName}%0A*Total:* $${orderData.totalAmount.toFixed(2)}`;
                 window.open(`https://wa.me/${bizSettings.whatsappPhone}?text=${msg}`, '_blank');
             }
 
             cart = []; document.getElementById("client-name").value = ""; document.getElementById("client-phone").value = ""; document.getElementById("client-address").value = ""; document.getElementById("cart-total").innerText = "$0.00";
-            renderClientMenu(); renderAdminOrders(); renderDeliveryOrders();
+            renderClientMenu();
         }
 
-        // --- SISTEMA DESGLOSE LISTA ---
         function buildOrderItemsHTML(items) {
             let html = "";
             items.forEach(i => {
-                html += `<li class="border-b border-slate-100 last:border-0 pb-2 pt-2">`;
+                html += `<li class="border-b border-slate-100 last:border-0 py-1.5">`;
                 html += `<p class="font-black text-slate-800 text-xs">${i.product.name}</p>`;
-                if(i.excluded && i.excluded.length > 0) {
-                    html += `<p class="text-[10px] text-red-500 font-bold pl-2 mt-0.5">❌ Quitar: ${i.excluded.join(', ')}</p>`;
-                }
-                if(i.notes) {
-                    html += `<p class="text-[10px] text-slate-500 font-semibold italic bg-slate-100 px-2 py-1 rounded-lg mt-1 border border-slate-200/50">Nota: "${i.notes}"</p>`;
-                }
+                if(i.excluded && i.excluded.length > 0) html += `<p class="text-[10px] text-red-500 font-bold pl-2 mt-0.5">❌ Quitar: ${i.excluded.join(', ')}</p>`;
+                if(i.notes) html += `<p class="text-[10px] text-slate-500 font-semibold italic bg-slate-100 px-2 py-1 rounded-lg mt-1">Nota: "${i.notes}"</p>`;
                 html += `</li>`;
             });
             return html;
         }
 
-        // --- PANEL ADMIN (ARQUITECTURA DE FLUJO FLEXIBLE Y TOTAL) ---
+        window.updateOrderStatus = async function(id, nextStatus) {
+            await updateDoc(doc(db, "pedidos", id), { status: nextStatus });
+        }
+
+        window.cancelOrderDefinitively = async function(id) {
+            if(confirm("¿Eliminar comanda?")) { await deleteDoc(doc(db, "pedidos", id)); }
+        }
+
+        window.finalizeOrderFromRole = async function(id) {
+            let idx = orders.findIndex(o => o.id === id);
+            if(idx !== -1) {
+                currentShiftSales.push(orders[idx]);
+                localStorage.setItem('saas_shift_sales', JSON.stringify(currentShiftSales));
+                await deleteDoc(doc(db, "pedidos", id));
+                calculateFinanceSummary();
+            }
+        }
+
         function renderAdminOrders() {
             const container = document.getElementById("admin-orders-container"); container.innerHTML = "";
-            if(orders.length === 0) { container.innerHTML = "<div class='text-center py-10 bg-white rounded-3xl border border-slate-100 font-bold text-slate-400 text-xs uppercase tracking-wider'>Bandeja limpia. No hay órdenes activas.</div>"; return; }
-            
+            if(orders.length === 0) { container.innerHTML = "<div class='text-center py-10 bg-white rounded-3xl border border-slate-100 font-bold text-slate-400 text-xs'>Bandeja vacía en la nube.</div>"; return; }
             orders.forEach(o => {
                 let actionArea = "";
-                
-                // CONDICIONAL COMPLETO DE ACCIONES SEGÚN ESTATUS
-                if(o.status === "Pendiente") {
-                    actionArea = `<button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-indigo-600 text-white text-xs px-4 py-2 rounded-xl font-black shadow-xs hover:bg-indigo-700 transition-all cursor-pointer">Preparar en Cocina</button>`;
-                } else if(o.status === "Preparando") {
-                    actionArea = `
-                        <div class="flex gap-2">
-                            <button onclick="pushStatusWhatsApp('${o.id}', '10 minutos')" class="border border-slate-200 text-slate-700 bg-slate-50 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 hover:bg-slate-100 transition-all cursor-pointer"><i data-lucide="message-square" class="w-3.5 h-3.5 text-[#06C167]"></i> Alerta 10m</button>
-                            <button onclick="updateOrderStatus('${o.id}', 'En Camino')" class="bg-[#06C167] text-white text-xs px-4 py-2 rounded-xl font-black shadow-xs hover:bg-emerald-600 transition-all cursor-pointer">Mandar con Repartidor</button>
-                        </div>`;
-                } else if(o.status === "En Camino") {
-                    // AQUÍ ESTÁ EL AJUSTE PEDIDO: El Admin puede revertir o cancelar la ruta si algo sale mal
-                    actionArea = `
-                        <div class="flex flex-col sm:flex-row gap-2 items-end sm:items-center">
-                            <span class="text-xs text-amber-500 font-black italic flex items-center gap-1"><i data-lucide="truck" class="w-4 h-4 animate-bounce"></i> En Ruta...</span>
-                            <div class="flex gap-1.5">
-                                <button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-1 rounded-lg transition-all cursor-pointer">Regresar a Cocina</button>
-                                <button onclick="cancelOrderDefinitively('${o.id}')" class="bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 text-[10px] font-bold px-2 py-1 rounded-lg transition-all cursor-pointer">Cancelar Orden</button>
-                            </div>
-                        </div>`;
-                }
+                if(o.status === "Pendiente") actionArea = `<button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-indigo-600 text-white text-xs px-4 py-2 rounded-xl font-black hover:bg-indigo-700 transition-all cursor-pointer">Cocinar</button>`;
+                else if(o.status === "Preparando") actionArea = `<div class="flex gap-2"><button onclick="updateOrderStatus('${o.id}', 'En Camino')" class="bg-[#06C167] text-white text-xs px-4 py-2 rounded-xl font-black hover:bg-emerald-600 transition-all cursor-pointer">Enviar Ruta</button></div>`;
+                else if(o.status === "En Camino") actionArea = `<div class="flex flex-col sm:flex-row gap-2 items-end"><span class="text-xs text-amber-500 font-black italic flex items-center gap-1"><i data-lucide="truck" class="w-4 h-4 animate-bounce"></i> En Ruta...</span><div class="flex gap-1.5"><button onclick="updateOrderStatus('${o.id}', 'Preparando')" class="bg-slate-100 border text-slate-700 text-[10px] font-bold px-2 py-1 rounded-lg cursor-pointer">Regresar</button><button onclick="cancelOrderDefinitively('${o.id}')" class="bg-red-50 border text-red-600 text-[10px] font-bold px-2 py-1 rounded-lg cursor-pointer">Cancelar</button></div></div>`;
 
                 container.innerHTML += `
-                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-2xs space-y-3.5">
-                        <div class="flex justify-between items-center border-b border-slate-50 pb-2.5">
-                            <div>
-                                <span class="font-black text-slate-900 text-sm">Orden #${o.id}</span>
-                                <span class="ml-2 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${o.deliveryMode === 'delivery' ? 'bg-purple-50 text-purple-700 border border-purple-100':'bg-amber-50 text-amber-700 border border-amber-100'}">${o.deliveryMode==='delivery'?'Delivery':'Pickup'}</span>
-                            </div>
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-2xs space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <div><span class="font-black text-slate-900 text-sm">Folio Cloud</span></div>
                             <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-lg border bg-slate-50 text-slate-600">${o.status}</span>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-100 text-xs">
-                            <div class="space-y-1">
-                                <p class="text-slate-400 font-medium">DATOS DE ENTREGA</p>
-                                <p class="text-slate-900 font-bold"><span class="text-slate-500">Cliente:</span> ${o.customerName} (${o.customerPhone})</p>
-                                <p class="text-slate-800 font-medium"><span class="text-slate-500">Dirección:</span> ${o.addressDetails}</p>
-                            </div>
-                            <div class="border-t md:border-t-0 md:border-l border-slate-200/80 pt-2.5 md:pt-0 md:pl-3.5">
-                                <p class="text-slate-400 font-black tracking-wider text-[10px] mb-1">COMANDA COCINA:</p>
-                                <ul class="divide-y divide-slate-100/40">${buildOrderItemsHTML(o.items)}</ul>
-                            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl border text-xs">
+                            <div class="space-y-1"><p class="text-slate-400 font-medium">ENTREGA</p><p class="text-slate-900 font-bold">Cliente: ${o.customerName}</p><p class="text-slate-800">Lugar: ${o.addressDetails}</p></div>
+                            <div class="border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-3.5"><p class="text-slate-400 font-black text-[10px] mb-1">DETALLE:</p><ul class="divide-y">${buildOrderItemsHTML(o.items)}</ul></div>
                         </div>
-                        <div class="flex justify-between items-center pt-2 border-t border-slate-50">
+                        <div class="flex justify-between items-center pt-2 border-t">
                             <span class="text-base font-black text-slate-900">$${o.totalAmount.toFixed(2)}</span>
                             <div>${actionArea}</div>
                         </div>
@@ -532,169 +500,116 @@
             lucide.createIcons();
         }
 
-        // --- PORTAL EXCLUSIVO REPARTIDORES ---
         function renderDeliveryOrders() {
             const container = document.getElementById("delivery-orders-container"); container.innerHTML = "";
             let deliveryList = orders.filter(o => o.status === 'En Camino' && o.deliveryMode === 'delivery');
-            
-            if(deliveryList.length === 0) { container.innerHTML = "<div class='text-center py-10 bg-white rounded-2xl border border-slate-100 font-bold text-slate-400 text-xs'>SIN RUTAS ASIGNADAS EN ESTE MOMENTO.</div>"; return; }
-            
+            if(deliveryList.length === 0) { container.innerHTML = "<div class='text-center py-10 bg-white rounded-2xl border font-bold text-slate-400 text-xs'>SIN ASIGNACIONES EN COBERTURA.</div>"; return; }
             deliveryList.forEach(o => {
                 container.innerHTML += `
                     <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-                        <div class="flex justify-between items-center border-b pb-2 border-slate-50">
-                            <span class="text-xs font-black text-slate-400 uppercase">Orden #${o.id}</span>
-                            <span class="text-sm font-black text-slate-900">${o.customerName}</span>
-                        </div>
+                        <div class="flex justify-between items-center border-b pb-2"><span class="text-xs font-black text-slate-400 uppercase">Ruta</span><span class="text-sm font-black text-slate-900">${o.customerName}</span></div>
                         <div class="text-xs bg-slate-50 p-3 rounded-2xl space-y-2 border">
-                            <p class="text-slate-700"><strong>Teléfono:</strong> ${o.customerPhone}</p>
-                            <p class="text-slate-700"><strong>Lugar:</strong> ${o.addressDetails}</p>
-                            <div class="border-t pt-2 mt-2">
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">Carga del Pedido:</p>
-                                <ul class="space-y-0.5 divide-y divide-slate-100/40">${buildOrderItemsHTML(o.items)}</ul>
-                            </div>
+                            <p><strong>Destino:</strong> ${o.addressDetails}</p>
+                            <div class="border-t pt-2 mt-2"><ul class="space-y-0.5 divide-y">${buildOrderItemsHTML(o.items)}</ul></div>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="window.open('https://maps.google.com/?q=${o.coords}', '_blank')" class="w-1/2 bg-slate-900 text-white text-xs py-3 rounded-xl font-black flex justify-center items-center gap-1 hover:bg-black transition-all cursor-pointer"><i data-lucide="map" class="w-4 h-4 text-[#06C167]"></i> Lanzar GPS</button>
-                            <button onclick="finalizeOrderFromRole('${o.id}')" class="w-1/2 bg-[#06C167] text-white text-xs py-3 rounded-xl font-black flex justify-center items-center gap-1 hover:bg-emerald-600 transition-all shadow-sm cursor-pointer"><i data-lucide="check" class="w-4 h-4"></i> Entregado</button>
+                            <button onclick="window.open('https://maps.google.com/?q=${o.coords}', '_blank')" class="w-1/2 bg-slate-900 text-white text-xs py-3 rounded-xl font-black flex justify-center items-center gap-1"><i data-lucide="map" class="w-4 h-4 text-[#06C167]"></i> Navegador</button>
+                            <button onclick="finalizeOrderFromRole('${o.id}')" class="w-1/2 bg-[#06C167] text-white text-xs py-3 rounded-xl font-black flex justify-center items-center gap-1 shadow-sm"><i data-lucide="check" class="w-4 h-4"></i> Entregado</button>
                         </div>
                     </div>`;
             });
             lucide.createIcons();
         }
 
-        function updateOrderStatus(id, nextStatus) {
-            let o = orders.find(ord => ord.id == id); if(o) o.status = nextStatus;
-            persistDatabase(); renderAdminOrders(); renderDeliveryOrders();
-        }
-
-        function cancelOrderDefinitively(id) {
-            if(confirm("¿Seguro que deseas cancelar de forma definitiva esta orden? Se removerá del panel.")) {
-                orders = orders.filter(ord => ord.id != id);
-                persistDatabase(); renderAdminOrders(); renderDeliveryOrders();
-            }
-        }
-
-        function pushStatusWhatsApp(id, time) {
-            let o = orders.find(ord => ord.id == id); if (!o) return;
-            let txt = `¡Hola *${o.customerName}*! Tu orden *#${o.id}* está lista y va en camino a tu dirección en un tiempo estimado de *${time}*. 🛵🔥`;
-            window.open(`https://wa.me/${o.customerPhone}?text=${encodeURIComponent(txt)}`, '_blank');
-        }
-
-        function finalizeOrderFromRole(id) {
-            let idx = orders.findIndex(ord => ord.id == id);
-            if (idx !== -1) {
-                let res = orders.splice(idx, 1)[0]; res.status = "Cerrado y Cobrado";
-                currentShiftSales.push(res);
-                persistDatabase(); renderAdminOrders(); renderDeliveryOrders(); calculateFinanceSummary();
-            }
-        }
-
-        // --- CONTROLES FINANCIEROS Y CORTES DE CAJA ---
         function calculateFinanceSummary() {
             let total = currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0);
             document.getElementById("live-sales-amount").innerText = `$${total.toFixed(2)}`;
-            document.getElementById("live-sales-count").innerText = `${currentShiftSales.length} órdenes completadas en la sesión diaria`;
+            document.getElementById("live-sales-count").innerText = `${currentShiftSales.length} liquidadas`;
         }
 
-        function closeCurrentShift() {
-            if(currentShiftSales.length === 0) return alert("No hay transacciones registradas.");
-            if (confirm("¿Confirmas cerrar caja y archivar el día de hoy de manera fija?")) {
+        window.closeCurrentShift = async function() {
+            if(currentShiftSales.length === 0) return alert("Caja en ceros.");
+            if (confirm("¿Hacer corte definitivo en Firebase?")) {
                 let sum = currentShiftSales.reduce((acc, o) => acc + o.totalAmount, 0);
-                archivedShifts.unshift({ date: new Date().toLocaleString(), ordersCount: currentShiftSales.length, revenue: sum });
-                currentShiftSales = []; 
-                persistDatabase(); calculateFinanceSummary(); renderArchivedShifts();
-                alert("🔒 Corte guardado con éxito.");
+                await addDoc(salesCol, { date: new Date().toLocaleString(), ordersCount: currentShiftSales.length, revenue: sum, timestamp: Date.now() });
+                currentShiftSales = []; localStorage.removeItem('saas_shift_sales'); calculateFinanceSummary();
             }
         }
 
         function renderArchivedShifts() {
             const container = document.getElementById("archived-shifts-box"); container.innerHTML = "";
-            if(archivedShifts.length === 0) { container.innerHTML = "<p class='text-xs font-bold text-slate-400 italic text-center py-4'>No se registran bitácoras previas.</p>"; return; }
+            if(archivedShifts.length === 0) { container.innerHTML = "<p class='text-xs font-bold text-slate-400 italic text-center py-4'>Sin bitácoras guardadas en la nube.</p>"; return; }
             archivedShifts.forEach(s => {
-                container.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center shadow-2xs">
-                        <div>
-                            <span class="text-xs font-black text-slate-800 block">${s.date}</span>
-                            <p class="text-[10px] text-slate-400 font-medium mt-0.5">${s.ordersCount} comandas consolidadas</p>
-                        </div>
-                        <span class="bg-slate-50 border px-3 py-1.5 rounded-xl font-black text-slate-900">$${s.revenue.toFixed(2)}</span>
-                    </div>`;
+                container.innerHTML += `<div class="bg-white p-4 rounded-2xl border flex justify-between text-xs font-bold shadow-2xs"><div><span>${s.date}</span><p class="text-[10px] text-slate-400 font-medium mt-0.5">${s.ordersCount} comandas</p></div><span class="bg-slate-50 border px-3 py-1.5 rounded-xl text-slate-900">$${s.revenue.toFixed(2)}</span></div>`;
             });
         }
 
-        // --- CRUD DE PRODUCTOS COMPLETO ---
         function renderAdminProducts() {
             const grid = document.getElementById("admin-products-grid"); grid.innerHTML = "";
             products.forEach(p => {
-                grid.innerHTML += `
-                    <div class="bg-white p-3 rounded-2xl border border-slate-100 flex gap-3 items-center shadow-2xs text-xs font-bold">
-                        <img src="${p.img}" class="w-12 h-12 object-cover rounded-xl border">
-                        <div class="flex-1 min-w-0">
-                            <span class="block text-slate-900 truncate">${p.name}</span>
-                            <span class="block text-[11px] text-slate-400 font-normal truncate">${p.ingredients ? p.ingredients.join(', '):''}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[#06C167] font-black">$${p.price}</span>
-                            <button onclick="deleteProductInventory(${p.id})" class="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition-all cursor-pointer"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                        </div>
-                    </div>`;
+                grid.innerHTML += `<div class="bg-white p-3 rounded-2xl border flex gap-3 items-center shadow-2xs text-xs font-bold"><img src="${p.img}" class="w-12 h-12 object-cover rounded-xl border"><div class="flex-1 min-w-0"><span class="block text-slate-900 truncate">${p.name}</span></div><div class="flex items-center gap-2"><span class="text-[#06C167] font-black">$${p.price}</span><button onclick="deleteProductInventory('${p.id}')" class="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div></div>`;
             });
             lucide.createIcons();
         }
 
-        function triggerProductModal() {
+        window.saveCrudProduct = async function() {
+            let name = document.getElementById("crud-name").value.trim();
+            let price = parseFloat(document.getElementById("crud-price").value);
+            let imgData = document.getElementById("crud-img").value || "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500";
+            let rawIng = document.getElementById("crud-ingredients").value.trim();
+            if(!name || isNaN(price)) return alert("Completa los campos.");
+            let ingArr = rawIng ? rawIng.split(',').map(i => i.trim()).filter(i => i !== "") : [];
+
+            await addDoc(productsCol, { name, price, img: imgData, ingredients: ingArr });
+            window.closeCrudModal();
+        }
+
+        window.deleteProductInventory = async function(id) {
+            if(confirm("¿Eliminar permanentemente de la nube?")) { await deleteDoc(doc(db, "productos", id)); }
+        }
+
+        window.saveBusinessSettings = async function() {
+            await setDoc(doc(db, "ajustes", "config_general"), {
+                whatsappActive: document.getElementById("setting-whatsapp-active").checked,
+                whatsappPhone: document.getElementById("setting-whatsapp-phone").value.trim()
+            });
+        }
+
+        window.triggerProductModal = function() {
             document.getElementById("file-upload-status").innerHTML = `<i data-lucide="camera" class="w-4 h-4 inline mr-1"></i>Abrir Cámara / Galería`;
             document.getElementById("crud-id").value = ""; document.getElementById("crud-name").value = ""; document.getElementById("crud-price").value = ""; document.getElementById("crud-img").value = ""; document.getElementById("crud-ingredients").value = "";
             document.getElementById("product-crud-modal").classList.add("active"); lucide.createIcons();
         }
-        function closeCrudModal() { document.getElementById("product-crud-modal").classList.remove("active"); }
+        window.closeCrudModal = function() { document.getElementById("product-crud-modal").classList.remove("active"); }
+        window.triggerLightbox = function(src) { document.getElementById("lightbox-img").src = src; document.getElementById("lightbox-modal").classList.add("active"); }
+        window.closeLightbox = function() { document.getElementById("lightbox-modal").classList.remove("active"); }
 
-        function saveCrudProduct() {
-            let name = document.getElementById("crud-name").value.trim();
-            let price = parseFloat(document.getElementById("crud-price").value);
-            let imgData = document.getElementById("crud-img").value || "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500";
-            let rawIng = document.getElementById("crud-ingredients").value;
-            
-            if(!name || isNaN(price)) return alert("Nombre y precio requeridos.");
-            let ingArr = rawIng ? rawIng.split(',').map(i => i.trim()).filter(i => i !== "") : [];
-
-            products.push({ id: Date.now(), name: name, price: price, img: imgData, ingredients: ingArr });
-            persistDatabase(); closeCrudModal(); renderClientMenu(); renderAdminProducts();
-        }
-
-        function deleteProductInventory(id) {
-            if(confirm("¿Eliminar producto?")) { products = products.filter(p => p.id !== id); persistDatabase(); renderClientMenu(); renderAdminProducts(); }
-        }
-
-        function triggerLightbox(src) { document.getElementById("lightbox-img").src = src; document.getElementById("lightbox-modal").classList.add("active"); }
-        function closeLightbox() { document.getElementById("lightbox-modal").classList.remove("active"); }
-
-        // --- SISTEMA DE LOGEO MULTIROL ---
-        function accessRole(role, passKey) {
-            let p = prompt(`Contraseña de acceso seguro:`);
+        window.accessRole = function(role, passKey) {
+            let p = prompt(`Contraseña:`);
             if (p === passKey) {
                 activeRoleMode = role;
                 document.getElementById("view-client").classList.add("hidden"); document.getElementById("cart-bar").classList.add("hidden"); document.getElementById("view-admin").classList.add("hidden"); document.getElementById("view-delivery").classList.add("hidden");
                 document.getElementById("role-banner").classList.remove("hidden");
-                document.getElementById("role-banner-text").innerText = role === 'admin_user' ? "Panel Administrativo General" : "Módulo Operativo de Repartidores";
+                document.getElementById("role-banner-text").innerText = role === 'admin_user' ? "Panel Administrativo Cloud" : "Módulo de Repartidores Cloud";
                 document.getElementById(role === 'admin_user' ? "view-admin" : "view-delivery").classList.remove("hidden");
-                if(role === 'admin_user') toggleAdminTabs('orders'); else renderDeliveryOrders();
-            } else if (p !== null) alert("❌ Acceso denegado.");
+                if(role === 'admin_user') toggleAdminTabs('orders');
+            }
             lucide.createIcons();
         }
 
-        function exitRoles() {
+        window.exitRoles = function() {
             activeRoleMode = "client";
             document.getElementById("role-banner").classList.add("hidden"); document.getElementById("view-admin").classList.add("hidden"); document.getElementById("view-delivery").classList.add("hidden");
             document.getElementById("view-client").classList.remove("hidden"); document.getElementById("cart-bar").classList.remove("hidden");
             setTimeout(() => { if(leafletMap) leafletMap.invalidateSize(); }, 200); lucide.createIcons();
         }
 
-        function toggleAdminTabs(tabName) {
+        window.toggleAdminTabs = function(tabName) {
             document.getElementById("panel-orders").classList.add("hidden"); document.getElementById("panel-products").classList.add("hidden"); document.getElementById("panel-sales").classList.add("hidden"); document.getElementById("panel-settings").classList.add("hidden");
             document.getElementById(`panel-${tabName}`).classList.remove("hidden"); lucide.createIcons();
         }
+
+        setTimeout(() => { window.initRealMap(); }, 300);
     </script>
 </body>
 </html>
